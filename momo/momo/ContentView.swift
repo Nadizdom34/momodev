@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var showLoginScreen = false
     @State private var showFriendsScreen = false  // New state for Friends List
+    @State private var showPersonalPage = false
 
     var body: some View {
         VStack {
@@ -49,6 +50,20 @@ struct ContentView: View {
                 }
                 .fullScreenCover(isPresented: $showFriendsScreen) {
                     FriendsListScreen()  // Displays the Friends List
+                }
+                
+                Button(action: {
+                    showPersonalPage = true  // Open PersonalPage List
+                }) {
+                    Text("My Page")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .fullScreenCover(isPresented: $showPersonalPage) {
+                    PersonalPage()  // Displays the Friends List
                 }
                 
                 Button(action: {
