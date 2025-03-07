@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showLoginScreen = false
+    @State private var showFriendsScreen = false  // New state for Friends List
 
     var body: some View {
         VStack {
@@ -33,7 +34,21 @@ struct ContentView: View {
                         .cornerRadius(10)
                 }
                 .fullScreenCover(isPresented: $showLoginScreen) {
-                    LoginScreen()  // Now references the separate file
+                    LoginScreen()
+                }
+                
+                Button(action: {
+                    showFriendsScreen = true  // Open Friends List
+                }) {
+                    Text("Friends List")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .fullScreenCover(isPresented: $showFriendsScreen) {
+                    FriendsListScreen()  // Displays the Friends List
                 }
                 
                 Button(action: {
