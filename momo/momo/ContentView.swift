@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  testproducts
-//
-//  Created by Karla Martinez on 2/26/25.
-//
-
 import SwiftUI
 
 struct ContentView: View {
@@ -19,21 +12,18 @@ struct ContentView: View {
                 .fontWeight(.bold)
                 .padding()
             
-        
-            
             Spacer()
             
             Circle()
                 .fill(Color.pink.opacity(0.3))
-                .frame(width:300, height: 300)
+                .frame(width: 300, height: 300)
                 .padding()
             
             Spacer()
             
             VStack(spacing: 16) {
                 Button(action: {
-                    // Handle login action
-                    showLoginScreen=true
+                    showLoginScreen = true
                 }) {
                     Text("Log In")
                         .frame(maxWidth: .infinity)
@@ -43,8 +33,8 @@ struct ContentView: View {
                         .cornerRadius(10)
                 }
                 .fullScreenCover(isPresented: $showLoginScreen) {
-                                    LoginView()
-                                }
+                    LoginScreen()  // Now references the separate file
+                }
                 
                 Button(action: {
                     // Handle sign-up action
@@ -64,22 +54,7 @@ struct ContentView: View {
     }
 }
 
-struct LoginView: View {
-    var body: some View {
-        VStack {
-            Text("Login Screen")
-                .font(.largeTitle)
-                .padding()
-            
-            Button("Dismiss") {
-                // Dismiss login screen
-            }
-            .padding()
-        }
-        
-    }
-}
-
 #Preview {
     ContentView()
 }
+
