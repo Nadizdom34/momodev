@@ -1,109 +1,85 @@
+//
+//  ContentView.swift
+//  testproducts
+//
+//  Created by Karla Martinez on 2/26/25.
+//
+
 import SwiftUI
-import CoreData
 
 struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-    @State private var showAlert = false
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
+    @State private var showLoginScreen = false
 
     var body: some View {
-        NavigationView {
-            VStack {
-                List {
-                    ForEach(items) { item in
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
-                    .onDelete(perform: deleteItems)
-                }
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        EditButton()
-                    }
-                }
-                
-                HStack {
-                    Button(action: addItem) {
-                        Text("Add Item")
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                    
-                    Button(action: deleteAllItems) {
-                        Text("Delete All")
-                            .padding()
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                }
-                
+        VStack {
+            Spacer()
+            
+            Text("MOMO DEV")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .padding()
+            
+        
+            
+            Spacer()
+            
+            Circle()
+                .fill(Color.pink.opacity(0.3))
+                .frame(width:300, height: 300)
+                .padding()
+            
+            Spacer()
+            
+            VStack(spacing: 16) {
                 Button(action: {
-                    showAlert = true
+                    // Handle login action
+                    showLoginScreen=true
                 }) {
-                    Text("Show Alert")
+                    Text("Log In")
+                        .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.green)
+                        .background(Color.pink.opacity(0.6))
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
-                .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Hello!"), message: Text("This is an alert message."), dismissButton: .default(Text("OK")))
+                .fullScreenCover(isPresented: $showLoginScreen) {
+                                    LoginView()
+                                }
+                
+                Button(action: {
+                    // Handle sign-up action
+                }) {
+                    Text("Sign Up")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.purple)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
                 }
             }
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-    
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-            saveContext()
-        }
-    }
-    
-    private func deleteAllItems() {
-        withAnimation {
-            items.forEach(viewContext.delete)
-            saveContext()
-        }
-    }
-    
-    private func saveContext() {
-        do {
-            try viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            .padding(.horizontal, 40)
+            
+            Spacer()
         }
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
+struct LoginView: View {
+    var body: some View {
+        VStack {
+            Text("Login Screen")
+                .font(.largeTitle)
+                .padding()
+            
+            Button("Dismiss") {
+                // Dismiss login screen
+            }
+            .padding()
+        }
+        
+    }
+}
 
 #Preview {
-    ContentView().environment(\ .managedObjectContext, PersistenceController.preview.container.viewContext)
+    ContentView()
 }
