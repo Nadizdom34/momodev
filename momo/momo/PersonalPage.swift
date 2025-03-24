@@ -15,10 +15,18 @@ struct PersonalPage: View {
 
     var body: some View {
         VStack {
-            Text("My Page")
+            Text("My Gym Status")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .padding(.bottom, 20)
+                .padding(.bottom, 10)
+            
+            Text("Nadiz")
+                .font(.headline)
+                .padding(.horizontal,-150)
+            Text("It's leg day!!")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .padding(.horizontal,-150)
 
 //            // Email Field
 //            TextField("Email", text: $email)
@@ -31,34 +39,40 @@ struct PersonalPage: View {
 //            SecureField("Password", text: $password)
 //                .textFieldStyle(RoundedBorderTextFieldStyle())
 //                .padding()
-
+            Circle()
+                .fill(Color.purple.opacity(0.3))
+                .frame(width: 150, height: 150)
+                .padding()
+            
             Button(action: {}) {
                 Text("At Gym")
-                    .padding()
+                    .padding(8)
                     .foregroundColor(.white)
                     .background(.green)
-                    .cornerRadius(100)
+                    .cornerRadius(30)
             }
-            .padding(.horizontal)
+//            .padding(.horizontal,100)
 
-            Spacer()
+//            Spacer().frame(width:2)
             Button(action: {}) {
                 Text("Going to Gym")
-                    .padding()
+                    .padding(8)
                     .foregroundColor(.white)
                     .background(.orange)
-                    .cornerRadius(100)
+                    .cornerRadius(30)
+
+            }
+            .padding(.horizontal,100)
+
+            Button(action: {}) {
+                Text("No Gym")
+                    .padding(8)
+                    .foregroundColor(.white)
+                    .background(.red)
+                    .cornerRadius(30)
             }
             .padding(.horizontal)
 
-            Spacer()
-            Button(action: {}) {
-                Text("No Gym")
-                    .padding()
-                    .foregroundColor(.white)
-                    .background(.red)
-                    .cornerRadius(100)
-            }
             // Login Button
 //            Button(action: {
 ////                handleLogin()
@@ -70,7 +84,7 @@ struct PersonalPage: View {
 //                    .foregroundColor(.white)
 //                    .cornerRadius(10)
 //            }
-            .padding(.horizontal)
+            .padding(.horizontal,30)
 
             Spacer()
 
