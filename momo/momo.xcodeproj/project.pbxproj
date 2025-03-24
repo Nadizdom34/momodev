@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3FD221952D92016200823C3E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3FD221942D92016200823C3E /* GoogleService-Info.plist */; };
+		3FD221982D9205DA00823C3E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD221972D9205DA00823C3E /* FirebaseAnalytics */; };
+		3FD2219A2D9205DA00823C3E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD221992D9205DA00823C3E /* FirebaseFirestore */; };
+		3FD2219C2D9205DA00823C3E /* FirebaseInAppMessaging-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD2219B2D9205DA00823C3E /* FirebaseInAppMessaging-Beta */; };
+		3FD2219E2D9205DA00823C3E /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD2219D2D9205DA00823C3E /* FirebaseMessaging */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		3FF1457A2D77C7560001FC29 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +32,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3FD221942D92016200823C3E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3FF145642D77C7520001FC29 /* momo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = momo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FF145792D77C7560001FC29 /* momoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = momoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FF145832D77C7560001FC29 /* momoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = momoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +61,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3FD2219E2D9205DA00823C3E /* FirebaseMessaging in Frameworks */,
+				3FD221982D9205DA00823C3E /* FirebaseAnalytics in Frameworks */,
+				3FD2219A2D9205DA00823C3E /* FirebaseFirestore in Frameworks */,
+				3FD2219C2D9205DA00823C3E /* FirebaseInAppMessaging-Beta in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +92,7 @@
 				3FF1457C2D77C7560001FC29 /* momoTests */,
 				3FF145862D77C7560001FC29 /* momoUITests */,
 				3FF145652D77C7520001FC29 /* Products */,
+				3FD221942D92016200823C3E /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -112,6 +126,10 @@
 			);
 			name = momo;
 			packageProductDependencies = (
+				3FD221972D9205DA00823C3E /* FirebaseAnalytics */,
+				3FD221992D9205DA00823C3E /* FirebaseFirestore */,
+				3FD2219B2D9205DA00823C3E /* FirebaseInAppMessaging-Beta */,
+				3FD2219D2D9205DA00823C3E /* FirebaseMessaging */,
 			);
 			productName = momo;
 			productReference = 3FF145642D77C7520001FC29 /* momo.app */;
@@ -195,6 +213,9 @@
 			);
 			mainGroup = 3FF1455B2D77C7520001FC29;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3FF145652D77C7520001FC29 /* Products */;
 			projectDirPath = "";
@@ -212,6 +233,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3FD221952D92016200823C3E /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -552,6 +574,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3FD221972D9205DA00823C3E /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		3FD221992D9205DA00823C3E /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		3FD2219B2D9205DA00823C3E /* FirebaseInAppMessaging-Beta */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseInAppMessaging-Beta";
+		};
+		3FD2219D2D9205DA00823C3E /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3FF1455C2D77C7520001FC29 /* Project object */;
 }

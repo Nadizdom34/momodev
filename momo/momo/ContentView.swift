@@ -1,4 +1,7 @@
 import SwiftUI
+import FirebaseCore
+import FirebaseFirestore
+
 
 struct ContentView: View {
     @State private var showLoginScreen = false
