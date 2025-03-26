@@ -6,6 +6,11 @@
 //
 
 import CoreData
+import SwiftUI
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseMessaging
+import FirebaseAnalytics
 
 struct PersistenceController {
     static let shared = PersistenceController()

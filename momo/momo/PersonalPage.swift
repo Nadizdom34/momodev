@@ -7,6 +7,11 @@
 
 
 import SwiftUI
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseMessaging
+import FirebaseAnalytics
+
 
 struct PersonalPage: View {
     @Environment(\.dismiss) var dismiss  // Allows dismissing the screen

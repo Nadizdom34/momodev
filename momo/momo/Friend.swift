@@ -7,6 +7,10 @@
 
 
 import SwiftUI
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseMessaging
+import FirebaseAnalytics
 
 struct Friend: Identifiable {
     let id = UUID()

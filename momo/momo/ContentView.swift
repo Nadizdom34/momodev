@@ -1,12 +1,16 @@
 import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
+import FirebaseMessaging
+import FirebaseAnalytics
+
 
 
 struct ContentView: View {
     @State private var showLoginScreen = false
     @State private var showFriendsScreen = false  // New state for Friends List
     @State private var showPersonalPage = false
+
 
     var body: some View {
         VStack {
