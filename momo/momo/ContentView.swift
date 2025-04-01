@@ -1,93 +1,30 @@
 import SwiftUI
 import Firebase
-import FirebaseCore
-import FirebaseFirestore
-import FirebaseMessaging
-import FirebaseAnalytics
-
-
 
 struct ContentView: View {
-    @State private var showLoginScreen = false
-    @State private var showFriendsScreen = false  // New state for Friends List
-    @State private var showPersonalPage = false
-
+    @State private var selectedTab = 0
+    @State private var isUserLoggedIn = true  // Set this to true to bypass login
 
     var body: some View {
-        VStack {
-            Spacer()
-            
-            Text("MOMO DEV")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding()
-            
-            Spacer()
-            
-            Circle()
-                .fill(Color.pink.opacity(0.3))
-                .frame(width: 300, height: 300)
-                .padding()
-            
-            Spacer()
-            
-            VStack(spacing: 16) {
-                Button(action: {
-                    showLoginScreen = true
-                }) {
-                    Text("Log In")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.pink.opacity(0.6))
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+        // Main Tab Navigation regardless of login status
+        TabView(selection: $selectedTab) {
+            HomeScreen()
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
                 }
-                .fullScreenCover(isPresented: $showLoginScreen) {
-                    LoginScreen()
+                .tag(0)
+
+            FriendsListScreen()
+                .tabItem {
+                    Label("Friends", systemImage: "person.2.fill")
                 }
-                
-                Button(action: {
-                    showFriendsScreen = true  // Open Friends List
-                }) {
-                    Text("Friends List")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                .tag(1)
+
+            PersonalPage()
+                .tabItem {
+                    Label("My Page", systemImage: "person.crop.circle")
                 }
-                .fullScreenCover(isPresented: $showFriendsScreen) {
-                    FriendsListScreen()  // Displays the Friends List
-                }
-                
-                Button(action: {
-                    showPersonalPage = true  // Open PersonalPage List
-                }) {
-                    Text("My Page")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-                .fullScreenCover(isPresented: $showPersonalPage) {
-                    PersonalPage()  // Displays the Friends List
-                }
-                
-                Button(action: {
-                    // Handle sign-up action
-                }) {
-                    Text("Sign Up")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.purple)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-            }
-            .padding(.horizontal, 40)
-            
-            Spacer()
+                .tag(2)
         }
     }
 }

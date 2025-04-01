@@ -1,34 +1,18 @@
-//
-//  Friend.swift
-//  momo
-//
-//  Created by William Acosta on 3/7/25.
-//
-
-
 import SwiftUI
 import Firebase
 import FirebaseCore
 import FirebaseFirestore
-import FirebaseMessaging
-import FirebaseAnalytics
 
 struct Friend: Identifiable {
-    let id = UUID()
+    let id: String  // Firestore document ID
     let name: String
     let status: GymStatus
 }
 
-enum GymStatus {
-    case inGym, notInGym, goingToGym
-
-    var description: String {
-        switch self {
-        case .inGym: return "In Gym"
-        case .notInGym: return "Not in Gym"
-        case .goingToGym: return "Going to the Gym"
-        }
-    }
+enum GymStatus: String, CaseIterable {
+    case inGym = "In Gym"
+    case notInGym = "Not in Gym"
+    case goingToGym = "Going to the Gym"
 
     var color: Color {
         switch self {
@@ -40,16 +24,10 @@ enum GymStatus {
 }
 
 struct FriendsListScreen: View {
-    @Environment(\.dismiss) var dismiss  // Allows dismissing the screen
-    @State private var friends = [
-        Friend(name: "William", status: .inGym),
-        Friend(name: "Bob", status: .notInGym),
-        Friend(name: "Charlie", status: .goingToGym),
-        Friend(name: "David", status: .inGym),
-        Friend(name: "Eve", status: .notInGym)
-    ]
-    
-    @State private var showAddFriendScreen = false  // Controls add friend modal
+    @Environment(\.dismiss) var dismiss
+    @State private var friends: [Friend] = []
+    @State private var showAddFriendScreen = false
+    private let db = Firestore.firestore()
 
     var body: some View {
         NavigationStack {
@@ -58,7 +36,7 @@ struct FriendsListScreen: View {
                     Text(friend.name)
                         .font(.headline)
                     Spacer()
-                    Text(friend.status.description)
+                    Text(friend.status.rawValue)
                         .foregroundColor(friend.status.color)
                         .fontWeight(.bold)
                 }
@@ -67,23 +45,47 @@ struct FriendsListScreen: View {
             .navigationTitle("Friends' Gym Status")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Back") {
-                        dismiss()  // Close the screen
-                    }
-                    .foregroundColor(.blue)
+                    Button("Back") { dismiss() }
+                        .foregroundColor(.blue)
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Add Friend") {
-                        showAddFriendScreen = true  // Show add friend screen
-                    }
-                    .foregroundColor(.blue)
+                    Button("Add Friend") { showAddFriendScreen = true }
+                        .foregroundColor(.blue)
                 }
             }
             .sheet(isPresented: $showAddFriendScreen) {
-                AddFriendScreen(friends: $friends)  // Present add friend screen
+                AddFriendScreen(friends: $friends)
+            }
+            .onAppear {
+                fetchFriendsFromFirestore()
             }
         }
+    }
+
+    // ✅ Fetch friends from Firestore
+    func fetchFriendsFromFirestore() {
+        let userID = "Nadiz"  // Replace with actual user authentication ID
+
+        db.collection("users").document(userID).collection("friends")
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("❌ Error fetching friends: \(error)")
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    self.friends = snapshot?.documents.compactMap { doc in
+                        let data = doc.data()
+                        guard let name = data["name"] as? String,
+                              let statusString = data["status"] as? String,
+                              let status = GymStatus(rawValue: statusString) else {
+                            return nil
+                        }
+                        return Friend(id: doc.documentID, name: name, status: status)
+                    } ?? []
+                }
+            }
     }
 }
 
@@ -93,38 +95,55 @@ struct AddFriendScreen: View {
     
     @State private var newFriendName = ""
     @State private var selectedStatus: GymStatus = .notInGym
-    
+    private let db = Firestore.firestore()
+
     var body: some View {
         NavigationStack {
             Form {
                 TextField("Friend's Name", text: $newFriendName)
-                
+
                 Picker("Status", selection: $selectedStatus) {
-                    Text("In Gym").tag(GymStatus.inGym)
-                    Text("Not in Gym").tag(GymStatus.notInGym)
-                    Text("Going to the Gym").tag(GymStatus.goingToGym)
+                    ForEach(GymStatus.allCases, id: \.self) { status in
+                        Text(status.rawValue).tag(status)
+                    }
                 }
                 .pickerStyle(SegmentedPickerStyle())
             }
             .navigationTitle("Add Friend")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+                    Button("Cancel") { dismiss() }
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Save") {
-                        if !newFriendName.isEmpty {
-                            let newFriend = Friend(name: newFriendName, status: selectedStatus)
-                            friends.append(newFriend)
-                        }
-                        dismiss()
-                    }
+                    Button("Save") { saveFriendToFirestore() }
+                        .disabled(newFriendName.isEmpty)
                 }
             }
         }
+    }
+
+    // ✅ Save new friend to Firestore
+    func saveFriendToFirestore() {
+        let userID = "Nadiz"  // Replace with actual user authentication ID
+        let friendData: [String: Any] = [
+            "name": newFriendName,
+            "status": selectedStatus.rawValue
+        ]
+
+        db.collection("users").document(userID).collection("friends")
+            .addDocument(data: friendData) { error in
+                if let error = error {
+                    print("❌ Error adding friend: \(error)")
+                } else {
+                    DispatchQueue.main.async {
+                        let newFriend = Friend(id: UUID().uuidString, name: newFriendName, status: selectedStatus)
+                        friends.append(newFriend)
+                        dismiss()
+                    }
+                    print("✅ Friend \(newFriendName) added successfully!")
+                }
+            }
     }
 }
 
