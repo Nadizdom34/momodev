@@ -1,5 +1,4 @@
 {
-<<<<<<< Updated upstream
   "originHash" : "c63c63846d9c539229e96de38d6af51417e28c0ee9a0bc48bd0f0f19d923c329",
   "pins" : [
     {
@@ -117,17 +116,6 @@
       "state" : {
         "revision" : "d72aed98f8253ec1aa9ea1141e28150f408cf17f",
         "version" : "1.29.0"
-=======
-  "originHash" : "0ed1a20ef167ff6bbd7e233d8316ce8089f144b9619fb921d55eb1b69ffdfd4c",
-  "pins" : [
-    {
-      "identity" : "rive-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/rive-app/rive-ios",
-      "state" : {
-        "revision" : "3a6393692f990e00065780eb7ee7a24b5ec5e92e",
-        "version" : "6.7.3"
->>>>>>> Stashed changes
       }
     }
   ],

@@ -7,15 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-<<<<<<< Updated upstream
 		3FD221952D92016200823C3E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3FD221942D92016200823C3E /* GoogleService-Info.plist */; };
 		3FD221982D9205DA00823C3E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD221972D9205DA00823C3E /* FirebaseAnalytics */; };
 		3FD2219A2D9205DA00823C3E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD221992D9205DA00823C3E /* FirebaseFirestore */; };
 		3FD2219C2D9205DA00823C3E /* FirebaseInAppMessaging-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD2219B2D9205DA00823C3E /* FirebaseInAppMessaging-Beta */; };
 		3FD2219E2D9205DA00823C3E /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD2219D2D9205DA00823C3E /* FirebaseMessaging */; };
-=======
-		EE86305C2D94B52400634313 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = EE86305B2D94B52400634313 /* RiveRuntime */; };
->>>>>>> Stashed changes
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,14 +74,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-<<<<<<< Updated upstream
 				3FD2219E2D9205DA00823C3E /* FirebaseMessaging in Frameworks */,
 				3FD221982D9205DA00823C3E /* FirebaseAnalytics in Frameworks */,
 				3FD2219A2D9205DA00823C3E /* FirebaseFirestore in Frameworks */,
 				3FD2219C2D9205DA00823C3E /* FirebaseInAppMessaging-Beta in Frameworks */,
-=======
-				EE86305C2D94B52400634313 /* RiveRuntime in Frameworks */,
->>>>>>> Stashed changes
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,14 +139,10 @@
 			);
 			name = momo;
 			packageProductDependencies = (
-<<<<<<< Updated upstream
 				3FD221972D9205DA00823C3E /* FirebaseAnalytics */,
 				3FD221992D9205DA00823C3E /* FirebaseFirestore */,
 				3FD2219B2D9205DA00823C3E /* FirebaseInAppMessaging-Beta */,
 				3FD2219D2D9205DA00823C3E /* FirebaseMessaging */,
-=======
-				EE86305B2D94B52400634313 /* RiveRuntime */,
->>>>>>> Stashed changes
 			);
 			productName = momo;
 			productReference = 3FF145642D77C7520001FC29 /* momo.app */;
@@ -239,11 +227,7 @@
 			mainGroup = 3FF1455B2D77C7520001FC29;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-<<<<<<< Updated upstream
 				3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-=======
-				EE8630552D94AF3F00634313 /* XCRemoteSwiftPackageReference "rive-ios" */,
->>>>>>> Stashed changes
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3FF145652D77C7520001FC29 /* Products */;
@@ -605,27 +589,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-<<<<<<< Updated upstream
 		3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 11.10.0;
-=======
-		EE8630552D94AF3F00634313 /* XCRemoteSwiftPackageReference "rive-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/rive-app/rive-ios";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.7.3;
->>>>>>> Stashed changes
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-<<<<<<< Updated upstream
 		3FD221972D9205DA00823C3E /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -645,12 +619,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
-=======
-		EE86305B2D94B52400634313 /* RiveRuntime */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EE8630552D94AF3F00634313 /* XCRemoteSwiftPackageReference "rive-ios" */;
-			productName = RiveRuntime;
->>>>>>> Stashed changes
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
