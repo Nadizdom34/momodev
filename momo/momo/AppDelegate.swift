@@ -5,12 +5,11 @@
 //  Created by William Acosta on 3/26/25.
 //
 
-
 import UIKit
 import Firebase
 import FirebaseCore
 import FirebaseFirestore
-
+import FirebaseAuth
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
@@ -19,4 +18,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         Analytics.logEvent(AnalyticsEventAppOpen, parameters: nil)
         return true
     }
+
+    // 👇 This is the key method Firebase Phone Auth needs
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        if Auth.auth().canHandleNotification(userInfo) {
+            completionHandler(.noData)
+            return
+        }
+
+        // Handle other push notifications here (if any)
+        completionHandler(.noData)
+    }
 }
+

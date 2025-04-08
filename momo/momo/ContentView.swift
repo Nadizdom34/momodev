@@ -1,35 +1,38 @@
 import SwiftUI
-import Firebase
+import FirebaseFirestore
 
 struct ContentView: View {
-    @State private var selectedTab = 0
-    @State private var isUserLoggedIn = true  // Set this to true to bypass login
+    @State private var isLoggedIn = false
+    @State private var userData: [String: Any]?
 
     var body: some View {
-        // Main Tab Navigation regardless of login status
-        TabView(selection: $selectedTab) {
-            HomeScreen()
-                .tabItem {
-                    Label("Home", systemImage: "house.fill")
+        Group {
+            if isLoggedIn, let userData = userData {
+                MainTabView(userData: userData) // ✅ Use new MainTabView
+            } else {
+                QuickLoginView { data in
+                    self.userData = data
+                    self.isLoggedIn = true
                 }
-                .tag(0)
-
-            FriendsListScreen()
-                .tabItem {
-                    Label("Friends", systemImage: "person.2.fill")
-                }
-                .tag(1)
-
-            PersonalPage()
-                .tabItem {
-                    Label("My Page", systemImage: "person.crop.circle")
-                }
-                .tag(2)
+            }
         }
     }
-}
 
-#Preview {
-    ContentView()
+    struct MainTabView: View {
+        var userData: [String: Any]
+
+        var body: some View {
+            TabView {
+                HomeScreen()
+                    .tabItem { Label("Home", systemImage: "house.fill") }
+                
+                FriendsListScreen(currentUserPhone: userData["phone"] as? String ?? "")
+                    .tabItem { Label("Friends", systemImage: "person.2.fill") }
+
+                PersonalPage(userData: userData) // ✅ Pass userData here
+                    .tabItem { Label("My Page", systemImage: "person.crop.circle") }
+            }
+        }
+    }
 }
 

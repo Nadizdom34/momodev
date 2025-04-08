@@ -1,34 +1,22 @@
-<!--<?xml version="1.0" encoding="UTF-8"?>-->
-<!--<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">-->
-<!--<plist version="1.0">-->
-<!--<dict>-->
-<!--	<key>UIApplicationSceneManifest</key>-->
-<!--	<dict>-->
-<!--		<key>UIApplicationSupportsMultipleScenes</key>-->
-<!--		<true/>-->
-<!--		<key>UISceneConfigurations</key>-->
-<!--		<dict>-->
-<!--			<key>UIWindowSceneSessionRoleApplication</key>-->
-<!--			<array>-->
-<!--				<dict>-->
-<!--					<key>UISceneClassName</key>-->
-<!--					<string></string>-->
-<!--					<key>UISceneConfigurationName</key>-->
-<!--					<string></string>-->
-<!--					<key>UISceneDelegateClassName</key>-->
-<!--					<string></string>-->
-<!--					<key>UISceneStoryboardFile</key>-->
-<!--					<string></string>-->
-<!--				</dict>-->
-<!--			</array>-->
-<!--		</dict>-->
-<!--	</dict>-->
-<!--</dict>-->
-<!--</plist>-->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <!-- ✅ For Firebase Phone Auth -->
+                <string>app-1-621799502173-ios-4918cb2f07bd9b92bff8b4</string>
+                <!-- ✅ Optional: for Google Sign-In, etc. -->
+                <string>com.googleusercontent.apps.621799502173-4918cb2f07bd9b92bff8b4</string>
+            </array>
+        </dict>
+    </array>
+
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
@@ -66,3 +54,4 @@
     </dict>
 </dict>
 </plist>
+

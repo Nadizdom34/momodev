@@ -5,9 +5,18 @@ import FirebaseFirestore
 struct PersonalPage: View {
     @Environment(\.dismiss) var dismiss
     @State private var statusMessage = "No Gym"
-    @State private var friends: [Friend] = []  // Use existing Friend struct
+    @State private var friends: [Friend] = []
 
-    private let db = Firestore.firestore()  // Single Firestore instance
+    let userData: [String: Any]
+    private let db = Firestore.firestore()
+
+    var userID: String {
+        userData["phone"] as? String ?? "unknown"
+    }
+
+    var userName: String {
+        userData["name"] as? String ?? "User"
+    }
 
     var body: some View {
         VStack {
@@ -15,10 +24,11 @@ struct PersonalPage: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .padding(.bottom, 10)
-            
-            Text("Nadiz")
+
+            Text(userName)
                 .font(.headline)
                 .padding(.horizontal, -150)
+
             Text("It's leg day!!")
                 .font(.subheadline)
                 .foregroundColor(.gray)
@@ -28,13 +38,11 @@ struct PersonalPage: View {
                 .fill(Color.purple.opacity(0.3))
                 .frame(width: 150, height: 150)
                 .padding()
-            
-            // Display current status
+
             Text("Current Status: \(statusMessage)")
                 .font(.headline)
                 .padding(.bottom, 10)
 
-            // Status Buttons
             Button(action: { updateStatus(status: .inGym) }) {
                 Text("At Gym")
                     .padding(8)
@@ -69,33 +77,29 @@ struct PersonalPage: View {
             .padding()
         }
         .padding()
-        .onAppear { fetchUserStatus() } // Fetch saved status on load
+        .onAppear { fetchUserStatus() }
     }
-    
+
     enum GymStatus: String {
         case inGym = "At Gym"
         case goingToGym = "Going to Gym"
         case notInGym = "No Gym"
     }
 
-    // Function to update status in Firestore
     func updateStatus(status: GymStatus) {
-        let userID = "Nadiz"  // Replace with actual user ID from authentication later on
         db.collection("users").document(userID).setData(["gymStatus": status.rawValue], merge: true) { error in
             if let error = error {
                 print("Error updating status: \(error)")
             } else {
                 DispatchQueue.main.async {
-                    statusMessage = status.rawValue  // Update UI
+                    statusMessage = status.rawValue
                     print("✅ Gym status updated to \(status.rawValue)")
                 }
             }
         }
     }
 
-    // Function to fetch saved status from Firestore
     func fetchUserStatus() {
-        let userID = "Nadiz"  // Replace with actual user ID from authentication later on
         db.collection("users").document(userID).getDocument { snapshot, error in
             if let error = error {
                 print("Error fetching status: \(error)")
@@ -103,7 +107,7 @@ struct PersonalPage: View {
             }
             if let data = snapshot?.data(), let savedStatus = data["gymStatus"] as? String {
                 DispatchQueue.main.async {
-                    statusMessage = savedStatus  // Update UI
+                    statusMessage = savedStatus
                     print("✅ Retrieved gym status: \(savedStatus)")
                 }
             }
