@@ -4,25 +4,13 @@ import FirebaseFirestore
 
 // MARK: - Supporting Models
 
-enum GymStatus: String, CaseIterable {
-    case inGym = "In Gym"
-    case notInGym = "Not in Gym"
-    case goingToGym = "Going to the Gym"
 
-    var color: Color {
-        switch self {
-        case .inGym: return .green
-        case .notInGym: return .red
-        case .goingToGym: return .yellow
-        }
-    }
-}
-
-struct Friend: Identifiable {
+struct Friend: Identifiable, Hashable {
     let id: String
     let name: String
     let status: GymStatus
 }
+
 
 // MARK: - Add Friend View
 

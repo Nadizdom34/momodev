@@ -3,14 +3,15 @@ import FirebaseFirestore
 
 struct FriendsListScreen: View {
     let currentUserPhone: String
-    @State private var friends: [Friend] = []
+    @State private var friendsDict: [String: Friend] = [:]
     @State private var showAddFriend = false
+
     private let db = Firestore.firestore()
-    @State private var listener: ListenerRegistration?
+    @State private var listeners: [ListenerRegistration] = []
 
     var body: some View {
         NavigationStack {
-            List(friends) { friend in
+            List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \.id) { friend in
                 HStack {
                     Text(friend.name)
                     Spacer()
@@ -27,36 +28,61 @@ struct FriendsListScreen: View {
                 }
             }
             .sheet(isPresented: $showAddFriend) {
-                AddFriendListScreen(friends: $friends, currentUserPhone: currentUserPhone)
+                AddFriendListScreen(currentUserPhone: currentUserPhone)
             }
             .onAppear {
-                startListeningForFriends()
+                listenToFriends()
             }
             .onDisappear {
-                listener?.remove()
+                removeAllListeners()
             }
         }
     }
 
-    func startListeningForFriends() {
-        listener?.remove()  // In case already listening
-        listener = db.collection("users").document(currentUserPhone).collection("friends")
+    func listenToFriends() {
+        removeAllListeners()
+
+        db.collection("users").document(currentUserPhone).collection("friends")
             .addSnapshotListener { snapshot, error in
                 if let error = error {
-                    print("❌ Error listening for friends: \(error)")
+                    print("❌ Error listening to friend list: \(error)")
                     return
                 }
 
-                self.friends = snapshot?.documents.compactMap { doc in
-                    let data = doc.data()
-                    guard let name = data["name"] as? String,
-                          let statusString = data["status"] as? String,
-                          let status = GymStatus(rawValue: statusString) else {
-                        return nil
-                    }
-                    return Friend(id: doc.documentID, name: name, status: status)
-                } ?? []
+                guard let docs = snapshot?.documents else { return }
+
+                for doc in docs {
+                    let friendID = doc.documentID
+
+                    // Listen to friend's main profile document
+                    let listener = db.collection("users").document(friendID)
+                        .addSnapshotListener { snap, error in
+                            if let error = error {
+                                print("❌ Error listening to friend profile: \(error)")
+                                return
+                            }
+
+                            guard let data = snap?.data(),
+                                  let name = data["name"] as? String,
+                                  let statusRaw = data["gymStatus"] as? String,
+                                  let status = GymStatus(rawValue: statusRaw) else {
+                                print("⚠️ Skipping friend \(friendID) due to missing or invalid data")
+                                return
+                            }
+
+                            DispatchQueue.main.async {
+                                friendsDict[friendID] = Friend(id: friendID, name: name, status: status)
+                            }
+                        }
+
+                    listeners.append(listener)
+                }
             }
+    }
+
+    func removeAllListeners() {
+        listeners.forEach { $0.remove() }
+        listeners.removeAll()
     }
 }
 

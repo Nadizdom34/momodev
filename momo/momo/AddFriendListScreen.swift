@@ -3,10 +3,10 @@ import FirebaseFirestore
 
 struct AddFriendListScreen: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var friends: [Friend]
     let currentUserPhone: String
-
     @State private var friendPhone = ""
+    @State private var errorMessage: String?
+
     private let db = Firestore.firestore()
 
     var body: some View {
@@ -16,58 +16,50 @@ struct AddFriendListScreen: View {
                     .keyboardType(.phonePad)
 
                 Button("Add Friend by Phone") {
-                    searchFriendByPhone()
+                    addFriend()
+                }
+
+                if let errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
                 }
             }
             .navigationTitle("Add Friend")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel") {
+                        dismiss()
+                    }
                 }
             }
         }
     }
 
-    func searchFriendByPhone() {
+    func addFriend() {
         let formattedPhone = friendPhone.hasPrefix("+") ? friendPhone : "+1\(friendPhone)"
 
-        db.collection("users").document(formattedPhone).getDocument { docSnapshot, error in
+        db.collection("users").document(formattedPhone).getDocument { snapshot, error in
             if let error = error {
-                print("❌ Error searching user: \(error)")
+                errorMessage = "Error finding user: \(error.localizedDescription)"
                 return
             }
 
-            guard let document = docSnapshot, document.exists else {
-                print("❌ No user found with phone number")
+            guard let data = snapshot?.data(),
+                  let _ = data["name"] as? String else {
+                errorMessage = "User not found or missing name"
                 return
             }
 
-            let data = document.data() ?? [:]
-            guard let name = data["name"] as? String else {
-                print("❌ User has no name field")
-                return
-            }
-
-            let statusString = data["gymStatus"] as? String ?? "No Gym"
-            let status = GymStatus(rawValue: statusString) ?? .notInGym
-            let friendID = document.documentID
-
-            let friend = Friend(id: friendID, name: name, status: status)
-
-            db.collection("users").document(currentUserPhone).collection("friends").document(friendID).setData([
-                "name": friend.name,
-                "status": friend.status.rawValue
-            ]) { error in
-                if let error = error {
-                    print("❌ Error saving friend: \(error)")
-                } else {
-                    DispatchQueue.main.async {
-                        friends.append(friend)
+            db.collection("users").document(currentUserPhone)
+                .collection("friends").document(formattedPhone)
+                .setData(["addedAt": Timestamp()]) { err in
+                    if let err = err {
+                        errorMessage = "Failed to add friend: \(err.localizedDescription)"
+                    } else {
+                        print("✅ Added friend: \(formattedPhone)")
                         dismiss()
                     }
-                    print("✅ Added friend: \(friend.name)")
                 }
-            }
         }
     }
 }

@@ -80,12 +80,7 @@ struct PersonalPage: View {
         .onAppear { fetchUserStatus() }
     }
 
-    enum GymStatus: String {
-        case inGym = "At Gym"
-        case goingToGym = "Going to Gym"
-        case notInGym = "No Gym"
-    }
-
+    
     func updateStatus(status: GymStatus) {
         db.collection("users").document(userID).setData(["gymStatus": status.rawValue], merge: true) { error in
             if let error = error {
