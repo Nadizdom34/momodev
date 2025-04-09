@@ -10,6 +10,8 @@ import SwiftUI
 
 struct MainTabView: View {
     var userData: [String: Any]
+    @AppStorage("userId") private var userId: String?
+
 
     var body: some View {
         TabView {

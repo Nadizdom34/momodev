@@ -2,12 +2,15 @@ import SwiftUI
 import FirebaseFirestore
 
 struct FriendsListScreen: View {
+
     let currentUserPhone: String
     @State private var friendsDict: [String: Friend] = [:]
     @State private var showAddFriend = false
 
     private let db = Firestore.firestore()
     @State private var listeners: [ListenerRegistration] = []
+    @AppStorage("userId") private var userId: String?
+
 
     var body: some View {
         NavigationStack {

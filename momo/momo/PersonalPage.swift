@@ -7,12 +7,16 @@ struct PersonalPage: View {
     @State private var statusMessage = "No Gym"
     @State private var customMessage = ""
     @State private var friends: [Friend] = []
+    
 
     let userData: [String: Any]
     private let db = Firestore.firestore()
+    @AppStorage("userId") private var userId: String?
+
+    
 
     var userID: String {
-        userData["phone"] as? String ?? "unknown"
+        userId ?? "unknown"
     }
 
     var userName: String {

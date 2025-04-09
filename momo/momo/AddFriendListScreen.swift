@@ -2,10 +2,13 @@ import SwiftUI
 import FirebaseFirestore
 
 struct AddFriendListScreen: View {
+
     @Environment(\.dismiss) var dismiss
     let currentUserPhone: String
     @State private var friendPhone = ""
     @State private var errorMessage: String?
+    @AppStorage("userId") private var userId: String?
+
 
     private let db = Firestore.firestore()
 

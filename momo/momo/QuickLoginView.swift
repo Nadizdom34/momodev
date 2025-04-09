@@ -5,8 +5,11 @@ struct QuickLoginView: View {
     @State private var userName = ""
     @State private var error: String?
 
-    @AppStorage("isLoggedIn") private var isLoggedIn = false
-    @AppStorage("userId") private var userId: String = ""
+    var isLoggedIn: Bool {
+        userId != nil
+    }
+
+    @AppStorage("userId") private var userId: String?
     @AppStorage("userName") private var storedUserName: String = ""
 
     var onLoginSuccess: (_ userData: [String: Any]) -> Void
@@ -79,7 +82,9 @@ struct QuickLoginView: View {
         let newUserRef = db.collection("users").document() // Auto-ID
         let userData: [String: Any] = [
             "name": userName,
-            "joined": Timestamp()
+            "joined": Timestamp(),
+            "gymStatus": GymStatus.notInGym.rawValue,
+            "statusMessage": ""
         ]
 
         newUserRef.setData(userData) { err in
@@ -88,7 +93,6 @@ struct QuickLoginView: View {
             } else {
                 userId = newUserRef.documentID
                 storedUserName = userName
-                isLoggedIn = true
 
                 var finalData = userData
                 finalData["id"] = userId

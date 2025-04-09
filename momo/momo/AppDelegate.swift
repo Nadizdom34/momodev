@@ -12,10 +12,19 @@ import FirebaseFirestore
 import FirebaseAuth
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
         Analytics.logEvent(AnalyticsEventAppOpen, parameters: nil)
+
+        // Access userId from UserDefaults
+        if let userId = UserDefaults.standard.string(forKey: "userId") {
+            print("User ID: \(userId)")
+        } else {
+            print("No user ID found")
+        }
+
         return true
     }
 

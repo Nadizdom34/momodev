@@ -4,6 +4,8 @@ import FirebaseFirestore
 struct ContentView: View {
     @State private var isLoggedIn = false
     @State private var userData: [String: Any]?
+    @AppStorage("userId") private var userId: String?
+
 
     var body: some View {
         Group {

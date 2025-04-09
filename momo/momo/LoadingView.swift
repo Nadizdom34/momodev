@@ -7,7 +7,10 @@
 
 import SwiftUI
 
+
 struct LoadingView: View {
+    @AppStorage("userId") private var userId: String?
+
     var body: some View {
         VStack {
             ProgressView("Loading...")
