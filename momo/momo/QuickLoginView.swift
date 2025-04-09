@@ -2,10 +2,12 @@ import SwiftUI
 import FirebaseFirestore
 
 struct QuickLoginView: View {
-    @State private var phoneNumber = ""
     @State private var userName = ""
-    @State private var showNameField = false
     @State private var error: String?
+
+    @AppStorage("isLoggedIn") private var isLoggedIn = false
+    @AppStorage("userId") private var userId: String = ""
+    @AppStorage("userName") private var storedUserName: String = ""
 
     var onLoginSuccess: (_ userData: [String: Any]) -> Void
 
@@ -13,7 +15,6 @@ struct QuickLoginView: View {
         VStack(spacing: 20) {
             Spacer()
 
-            // Placeholder Mascot Image
             Image(systemName: "person.crop.circle.badge.plus")
                 .resizable()
                 .scaledToFit()
@@ -21,15 +22,12 @@ struct QuickLoginView: View {
                 .foregroundColor(.pink.opacity(0.8))
                 .padding(.bottom, 10)
 
-            // App Title
             Text("Welcome to")
                 .font(.title2)
                 .foregroundColor(.gray)
-
             Text("Momo Fit")
                 .font(.system(size: 40, weight: .bold))
                 .foregroundColor(.pink)
-
             Text("Connect with friends for your fitness journey 💪")
                 .font(.subheadline)
                 .foregroundColor(.gray)
@@ -38,18 +36,10 @@ struct QuickLoginView: View {
 
             Spacer()
 
-            // Input Fields
             VStack(spacing: 16) {
-                TextField("Enter phone number", text: $phoneNumber)
-                    .keyboardType(.phonePad)
+                TextField("Enter your name", text: $userName)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
-
-                if showNameField {
-                    TextField("Enter your name", text: $userName)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.horizontal)
-                }
 
                 if let error = error {
                     Text(error)
@@ -57,8 +47,8 @@ struct QuickLoginView: View {
                         .padding(.horizontal)
                 }
 
-                Button(action: handleButtonPress) {
-                    Text(showNameField ? "Create Account" : "Continue")
+                Button(action: handleLogin) {
+                    Text("Continue")
                         .fontWeight(.semibold)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -79,37 +69,30 @@ struct QuickLoginView: View {
         .edgesIgnoringSafeArea(.all)
     }
 
-    private func handleButtonPress() {
-        let formattedPhone = phoneNumber.hasPrefix("+") ? phoneNumber : "+1" + phoneNumber
+    private func handleLogin() {
+        guard !userName.isEmpty else {
+            error = "Please enter your name"
+            return
+        }
+
         let db = Firestore.firestore()
-        let userRef = db.collection("users").document(formattedPhone)
+        let newUserRef = db.collection("users").document() // Auto-ID
+        let userData: [String: Any] = [
+            "name": userName,
+            "joined": Timestamp()
+        ]
 
-        userRef.getDocument { docSnapshot, err in
+        newUserRef.setData(userData) { err in
             if let err = err {
-                error = "Error checking user: \(err.localizedDescription)"
-                return
-            }
-
-            if let data = docSnapshot?.data() {
-                onLoginSuccess(data)
-            } else if showNameField {
-                let newUser = [
-                    "name": userName,
-                    "phone": formattedPhone,
-                    "joined": Timestamp()
-                ] as [String: Any]
-
-                userRef.setData(newUser) { error in
-                    if let error = error {
-                        self.error = "Failed to create user: \(error.localizedDescription)"
-                    } else {
-                        onLoginSuccess(newUser)
-                    }
-                }
+                self.error = "Failed to create user: \(err.localizedDescription)"
             } else {
-                withAnimation {
-                    showNameField = true
-                }
+                userId = newUserRef.documentID
+                storedUserName = userName
+                isLoggedIn = true
+
+                var finalData = userData
+                finalData["id"] = userId
+                onLoginSuccess(finalData)
             }
         }
     }
