@@ -1,11 +1,3 @@
-//
-//  GymStatus.swift
-//  momo
-//
-//  Created by William Acosta on 4/8/25.
-//
-
-
 import SwiftUI
 
 enum GymStatus: String, CaseIterable {
@@ -21,3 +13,4 @@ enum GymStatus: String, CaseIterable {
         }
     }
 }
+

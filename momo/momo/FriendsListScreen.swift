@@ -12,12 +12,22 @@ struct FriendsListScreen: View {
     var body: some View {
         NavigationStack {
             List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \.id) { friend in
-                HStack {
-                    Text(friend.name)
-                    Spacer()
-                    Text(friend.status.rawValue)
-                        .foregroundColor(friend.status.color)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text(friend.name)
+                            .font(.headline)
+                        Spacer()
+                        Text(friend.status.rawValue)
+                            .foregroundColor(friend.status.color)
+                    }
+
+                    if let message = friend.message, !message.isEmpty {
+                        Text("“\(message)”")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
                 }
+                .padding(.vertical, 6)
             }
             .navigationTitle("Friends")
             .toolbar {
@@ -54,7 +64,6 @@ struct FriendsListScreen: View {
                 for doc in docs {
                     let friendID = doc.documentID
 
-                    // Listen to friend's main profile document
                     let listener = db.collection("users").document(friendID)
                         .addSnapshotListener { snap, error in
                             if let error = error {
@@ -70,8 +79,15 @@ struct FriendsListScreen: View {
                                 return
                             }
 
+                            let message = data["statusMessage"] as? String ?? ""
+
                             DispatchQueue.main.async {
-                                friendsDict[friendID] = Friend(id: friendID, name: name, status: status)
+                                friendsDict[friendID] = Friend(
+                                    id: friendID,
+                                    name: name,
+                                    status: status,
+                                    message: message
+                                )
                             }
                         }
 

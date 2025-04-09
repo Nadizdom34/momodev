@@ -2,17 +2,12 @@ import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 
-// MARK: - Supporting Models
-
-
 struct Friend: Identifiable, Hashable {
     let id: String
     let name: String
     let status: GymStatus
+    let message: String?
 }
-
-
-// MARK: - Add Friend View
 
 struct AddFriendScreen: View {
     @Environment(\.dismiss) var dismiss
@@ -45,7 +40,9 @@ struct AddFriendScreen: View {
             return
         }
 
-        db.collection("users").whereField("phone", isEqualTo: friendPhone)
+        let formattedPhone = friendPhone.hasPrefix("+") ? friendPhone : "+1\(friendPhone)"
+
+        db.collection("users").whereField("phone", isEqualTo: formattedPhone)
             .getDocuments { snapshot, error in
                 if let error = error {
                     print("❌ Error searching user: \(error)")
@@ -65,12 +62,14 @@ struct AddFriendScreen: View {
                     return
                 }
 
-                let friend = Friend(id: document.documentID, name: name, status: status)
+                let message = data["statusMessage"] as? String
+                let friend = Friend(id: document.documentID, name: name, status: status, message: message)
 
                 db.collection("users").document(userID).collection("friends")
                     .document(friend.id).setData([
                         "name": friend.name,
-                        "status": friend.status.rawValue
+                        "status": friend.status.rawValue,
+                        "message": message ?? ""
                     ]) { error in
                         if let error = error {
                             print("❌ Error saving friend: \(error)")
