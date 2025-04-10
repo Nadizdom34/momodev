@@ -79,7 +79,7 @@ struct QuickLoginView: View {
         }
 
         let db = Firestore.firestore()
-        let newUserRef = db.collection("users").document() // Auto-ID
+        let newUserRef = db.collection("users").document()
         let userData: [String: Any] = [
             "name": userName,
             "joined": Timestamp(),

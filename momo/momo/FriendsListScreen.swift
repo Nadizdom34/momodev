@@ -2,19 +2,15 @@ import SwiftUI
 import FirebaseFirestore
 
 struct FriendsListScreen: View {
-
-    let currentUserPhone: String
     @State private var friendsDict: [String: Friend] = [:]
     @State private var showAddFriend = false
-
     private let db = Firestore.firestore()
     @State private var listeners: [ListenerRegistration] = []
     @AppStorage("userId") private var userId: String?
 
-
     var body: some View {
         NavigationStack {
-            List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \.id) { friend in
+            List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \ .id) { friend in
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text(friend.name)
@@ -25,7 +21,7 @@ struct FriendsListScreen: View {
                     }
 
                     if let message = friend.message, !message.isEmpty {
-                        Text("“\(message)”")
+                        Text("\"\(message)\"")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
@@ -41,7 +37,7 @@ struct FriendsListScreen: View {
                 }
             }
             .sheet(isPresented: $showAddFriend) {
-                AddFriendListScreen(currentUserPhone: currentUserPhone)
+                AddFriendListScreen()
             }
             .onAppear {
                 listenToFriends()
@@ -53,9 +49,10 @@ struct FriendsListScreen: View {
     }
 
     func listenToFriends() {
+        guard let userId = userId, !userId.isEmpty else { return }
         removeAllListeners()
 
-        db.collection("users").document(currentUserPhone).collection("friends")
+        db.collection("users").document(userId).collection("friends")
             .addSnapshotListener { snapshot, error in
                 if let error = error {
                     print("❌ Error listening to friend list: \(error)")
@@ -104,4 +101,3 @@ struct FriendsListScreen: View {
         listeners.removeAll()
     }
 }
-

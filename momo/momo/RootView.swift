@@ -13,7 +13,6 @@ struct RootView: View {
             if let userData = userData {
                 MainTabView(userData: userData)
             } else {
-                // Fetch userData from Firestore
                 LoadingView()
                     .onAppear(perform: fetchUserData)
             }
@@ -26,8 +25,8 @@ struct RootView: View {
     }
 
     private func fetchUserData() {
-        guard let unwrappedUserId = userId else {
-            // Fallback to login if userId is missing
+        guard let unwrappedUserId = userId, !unwrappedUserId.isEmpty else {
+            print("❌ Missing or empty userId – logging out.")
             self.isLoggedIn = false
             return
         }
@@ -37,7 +36,7 @@ struct RootView: View {
             if let data = snapshot?.data() {
                 self.userData = data.merging(["id": unwrappedUserId]) { $1 }
             } else {
-                // If something went wrong, fallback to login
+                print("❌ Failed to fetch user data: \(error?.localizedDescription ?? "unknown error")")
                 self.isLoggedIn = false
             }
         }

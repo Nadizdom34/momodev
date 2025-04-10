@@ -18,7 +18,7 @@ struct MainTabView: View {
             HomeScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
             
-            FriendsListScreen(currentUserPhone: userData["phone"] as? String ?? "")
+            FriendsListScreen()
                 .tabItem { Label("Friends", systemImage: "person.2.fill") }
 
             PersonalPage(userData: userData)

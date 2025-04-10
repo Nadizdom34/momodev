@@ -2,23 +2,18 @@ import SwiftUI
 import FirebaseFirestore
 
 struct AddFriendListScreen: View {
-
-    @Environment(\.dismiss) var dismiss
-    let currentUserPhone: String
-    @State private var friendPhone = ""
+    @Environment(\ .dismiss) var dismiss
+    @State private var friendId = ""
     @State private var errorMessage: String?
     @AppStorage("userId") private var userId: String?
-
-
     private let db = Firestore.firestore()
 
     var body: some View {
         NavigationStack {
             Form {
-                TextField("Friend's Phone Number", text: $friendPhone)
-                    .keyboardType(.phonePad)
+                TextField("Friend's User ID", text: $friendId)
 
-                Button("Add Friend by Phone") {
+                Button("Add Friend by ID") {
                     addFriend()
                 }
 
@@ -39,9 +34,12 @@ struct AddFriendListScreen: View {
     }
 
     func addFriend() {
-        let formattedPhone = friendPhone.hasPrefix("+") ? friendPhone : "+1\(friendPhone)"
+        guard let userId = userId, !userId.isEmpty else {
+            errorMessage = "Invalid user ID"
+            return
+        }
 
-        db.collection("users").document(formattedPhone).getDocument { snapshot, error in
+        db.collection("users").document(friendId).getDocument { snapshot, error in
             if let error = error {
                 errorMessage = "Error finding user: \(error.localizedDescription)"
                 return
@@ -53,13 +51,13 @@ struct AddFriendListScreen: View {
                 return
             }
 
-            db.collection("users").document(currentUserPhone)
-                .collection("friends").document(formattedPhone)
+            db.collection("users").document(userId)
+                .collection("friends").document(friendId)
                 .setData(["addedAt": Timestamp()]) { err in
                     if let err = err {
                         errorMessage = "Failed to add friend: \(err.localizedDescription)"
                     } else {
-                        print("✅ Added friend: \(formattedPhone)")
+                        print("✅ Added friend: \(friendId)")
                         dismiss()
                     }
                 }
