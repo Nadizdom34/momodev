@@ -12,8 +12,9 @@ struct PersonalPage: View {
     private let db = Firestore.firestore()
 
     var userID: String {
-        userData["phone"] as? String ?? "unknown"
+        userData["id"] as? String ?? "unknown"
     }
+
 
     var userName: String {
         userData["name"] as? String ?? "User"
