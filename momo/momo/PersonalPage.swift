@@ -7,16 +7,12 @@ struct PersonalPage: View {
     @State private var statusMessage = "No Gym"
     @State private var customMessage = ""
     @State private var friends: [Friend] = []
-    
 
     let userData: [String: Any]
     private let db = Firestore.firestore()
-    @AppStorage("userId") private var userId: String?
-
-    
 
     var userID: String {
-        userId ?? "unknown"
+        userData["phone"] as? String ?? "unknown"
     }
 
     var userName: String {
@@ -24,77 +20,72 @@ struct PersonalPage: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            Text("My Gym Status")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+        ScrollView {
+            VStack(spacing: 24) {
+                // Profile Header
+                VStack(spacing: 16) {
+                    Circle()
+                        .fill(Color.purple.opacity(0.2))
+                        .frame(width: 180, height: 180) // Increased size
+                        .overlay(
+                            Image(systemName: "person.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 100, height: 100) // Increased image size
+                                .foregroundColor(.purple)
+                        )
+                        .shadow(radius: 10)
 
-            Text(userName)
-                .font(.headline)
+                    Text(userName)
+                        .font(.title)
+                        .fontWeight(.bold)
 
-            // 📝 Custom Message Field
-            TextField("What's your status message?", text: $customMessage)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.horizontal)
-                .onSubmit {
-                    saveCustomMessage()
+                    Text("Current Status: \(statusMessage)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .padding(.top, 4)
                 }
-                .onChange(of: customMessage) { _ in
-                    saveCustomMessage()
-                }
 
-            Circle()
-                .fill(Color.purple.opacity(0.3))
-                .frame(width: 150, height: 150)
+                // Custom Message Section
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Status Message")
+                        .font(.headline)
+
+                    TextField("What's your status message?", text: $customMessage)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .onSubmit {
+                            saveCustomMessage()
+                        }
+                        .onChange(of: customMessage) { _ in
+                            saveCustomMessage()
+                        }
+                }
                 .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
 
-            Text("Current Status: \(statusMessage)")
-                .font(.headline)
+                // Gym Status Buttons
+                VStack(spacing: 16) {
+                    Text("Set Your Gym Status")
+                        .font(.headline)
 
-            // 💪 Status Buttons
-            VStack(spacing: 12) {
-                Button(action: { updateStatus(status: .inGym) }) {
-                    Text("At Gym")
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(30)
+                    HStack(spacing: 12) {
+                        StatusButton(title: "At Gym", color: .green) {
+                            updateStatus(status: .inGym)
+                        }
+                        StatusButton(title: "Going", color: .orange) {
+                            updateStatus(status: .goingToGym)
+                        }
+                        StatusButton(title: "No Gym", color: .red) {
+                            updateStatus(status: .notInGym)
+                        }
+                    }
                 }
 
-                Button(action: { updateStatus(status: .goingToGym) }) {
-                    Text("Going to Gym")
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.orange)
-                        .foregroundColor(.white)
-                        .cornerRadius(30)
-                }
-
-                Button(action: { updateStatus(status: .notInGym) }) {
-                    Text("No Gym")
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.red)
-                        .foregroundColor(.white)
-                        .cornerRadius(30)
-                }
+                Spacer()
             }
-            .padding(.horizontal)
-
-            Spacer()
-
-            Button(action: { dismiss() }) {
-                Text("Back")
-                    .fontWeight(.semibold)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(12)
-            }
-            .padding(.horizontal)
+            .padding()
         }
-        .padding()
         .onAppear {
             fetchUserStatus()
         }
@@ -154,3 +145,20 @@ struct PersonalPage: View {
     }
 }
 
+struct StatusButton: View {
+    let title: String
+    let color: Color
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .fontWeight(.medium)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(color)
+                .foregroundColor(.white)
+                .cornerRadius(12)
+        }
+    }
+}
