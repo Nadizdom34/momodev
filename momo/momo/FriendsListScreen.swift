@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseFirestore
+import FirebaseFunctions
 
 struct FriendsListScreen: View {
     @State private var friendsDict: [String: Friend] = [:]
@@ -10,7 +11,7 @@ struct FriendsListScreen: View {
 
     var body: some View {
         NavigationStack {
-            List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \ .id) { friend in
+            List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \.id) { friend in
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text(friend.name)
@@ -24,6 +25,15 @@ struct FriendsListScreen: View {
                         Text("\"\(message)\"")
                             .font(.subheadline)
                             .foregroundColor(.gray)
+                    }
+
+                    Button(action: {
+                        sendGymPing(to: friend.id)
+                    }) {
+                        Text("Notify: I'm at the gym")
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                            .padding(.top, 4)
                     }
                 }
                 .padding(.vertical, 6)
@@ -100,4 +110,15 @@ struct FriendsListScreen: View {
         listeners.forEach { $0.remove() }
         listeners.removeAll()
     }
+
+    func sendGymPing(to friendId: String) {
+        Functions.functions().httpsCallable("sendGymPing").call(["friendId": friendId]) { result, error in
+            if let error = error {
+                print("❌ Failed to send gym ping: \(error.localizedDescription)")
+            } else {
+                print("✅ Sent gym ping to \(friendId)")
+            }
+        }
+    }
 }
+
