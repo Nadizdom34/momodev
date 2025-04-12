@@ -10,23 +10,38 @@ struct FriendsListScreen: View {
 
     var body: some View {
         NavigationStack {
-            List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \ .id) { friend in
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text(friend.name)
-                            .font(.headline)
-                        Spacer()
-                        Text(friend.status.rawValue)
-                            .foregroundColor(friend.status.color)
-                    }
+            ZStack {
+                // Soft pink gradient background
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(red: 1.0, green: 0.85, blue: 0.9), // light blush pink
+                        Color(red: 1.0, green: 0.7, blue: 0.85)  // soft rose
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
 
-                    if let message = friend.message, !message.isEmpty {
-                        Text("\"\(message)\"")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \.id) { friend in
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text(friend.name)
+                                .font(.headline)
+                            Spacer()
+                            Text(friend.status.rawValue)
+                                .foregroundColor(friend.status.color)
+                        }
+
+                        if let message = friend.message, !message.isEmpty {
+                            Text("\"\(message)\"")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                        }
                     }
+                    .padding(.vertical, 6)
+                    .listRowBackground(Color.white.opacity(0.3)) // Make list row slightly transparent
                 }
-                .padding(.vertical, 6)
+                .scrollContentBackground(.hidden) // Hide the default List background
             }
             .navigationTitle("Friends")
             .toolbar {

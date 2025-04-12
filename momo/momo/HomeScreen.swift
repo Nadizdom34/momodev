@@ -2,51 +2,65 @@ import SwiftUI
 
 struct HomeScreen: View {
     var body: some View {
-        VStack {
-            Spacer()
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.85, green: 0.80, blue: 0.95),
+//                    Color(red: 0.75, green: 0.65, blue: 0.90)
+                    Color(red: 0.7, green: 0.6, blue: 0.95),
 
-            Text("Momo Fit")
-                .font(.system(size: 40, weight: .bold))
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(LinearGradient(gradient: Gradient(colors: [Color.pink, Color.pink.opacity(0.6)]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                .foregroundColor(.white)
-                .cornerRadius(25)
-                .shadow(radius: 10)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
 
-            Image(systemName: "figure.walk") // Placeholder Image
-                .resizable()
-                .scaledToFit()
-                .frame(width: 200, height: 200)
-                .foregroundColor(.pink)
-                .shadow(radius: 10)
-                .padding(.bottom, 60)
+            VStack(spacing: 30) {
+                Spacer()
 
-            Spacer()
+                Text("Momo Fit")
+                    .font(.system(size: 42, weight: .heavy, design: .rounded))
+                    .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
 
-//            Button(action: {
-//                print("Get Started Tapped") // Placeholder action
-//            }) {
-//                Text("Get Started")
-//                    .font(.title2)
-//                    .fontWeight(.semibold)
-//                    .frame(maxWidth: .infinity)
-//                    .padding()
-//                    .background(LinearGradient(gradient: Gradient(colors: [Color.pink, Color.pink.opacity(0.6)]), startPoint: .topLeading, endPoint: .bottomTrailing))
-//                    .foregroundColor(.white)
-//                    .cornerRadius(20)
-//                    .shadow(radius: 10)
-//            }
-//            .padding(.horizontal, 40)
-//
-//            Spacer()
+                Image(systemName: "figure.walk")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 180, height: 180)
+                    .foregroundColor(.white)
+                    .shadow(radius: 10)
+
+                Text("Track your fitness. Stay motivated. Connect with friends.")
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.white)
+                    .font(.title3)
+                    .padding(.horizontal, 40)
+
+                Spacer()
+
+//                Button(action: {
+//                    print("Get Started tapped") // Replace with navigation logic
+//                }) {
+//                    Text("Get Started")
+//                        .font(.title2)
+//                        .fontWeight(.bold)
+//                        .padding()
+//                        .frame(maxWidth: .infinity)
+//                        .background(Color.white)
+//                        .foregroundColor(Color(red: 0.6, green: 0.4, blue: 0.8)) // lavender-purple
+//                        .cornerRadius(20)
+//                        .shadow(radius: 10)
+//                        .padding(.horizontal, 40)
+//                }
+                .scaleEffect(1.05)
+                .animation(.easeInOut(duration: 0.2), value: UUID())
+
+                Spacer(minLength: 40)
+            }
         }
-        .background(Color.white)
-        .edgesIgnoringSafeArea(.all)
     }
 }
 
 #Preview {
     HomeScreen()
 }
-

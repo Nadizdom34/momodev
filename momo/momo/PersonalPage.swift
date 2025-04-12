@@ -15,77 +15,90 @@ struct PersonalPage: View {
         userData["id"] as? String ?? "unknown"
     }
 
-
     var userName: String {
         userData["name"] as? String ?? "User"
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                // Profile Header
-                VStack(spacing: 16) {
-                    Circle()
-                        .fill(Color.purple.opacity(0.2))
-                        .frame(width: 180, height: 180) // Increased size
-                        .overlay(
-                            Image(systemName: "person.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 100, height: 100) // Increased image size
-                                .foregroundColor(.purple)
-                        )
-                        .shadow(radius: 10)
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.6, green: 0.4, blue: 0.9), // soft purple
+                    Color(red: 1.0, green: 0.7, blue: 0.85) // soft pink
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
 
-                    Text(userName)
-                        .font(.title)
-                        .fontWeight(.bold)
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Profile Header
+                    VStack(spacing: 16) {
+                        Circle()
+                            .fill(Color.white.opacity(0.2))
+                            .frame(width: 180, height: 180)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 100, height: 100)
+                                    .foregroundColor(.white)
+                            )
+                            .shadow(radius: 10)
 
-                    Text("Current Status: \(statusMessage)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .padding(.top, 4)
-                }
+                        Text(userName)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
 
-                // Custom Message Section
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Status Message")
-                        .font(.headline)
+                        Text("Current Status: \(statusMessage)")
+                            .font(.subheadline)
+                            .foregroundColor(.white.opacity(0.8))
+                            .padding(.top, 4)
+                    }
 
-                    TextField("What's your status message?", text: $customMessage)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .onSubmit {
-                            saveCustomMessage()
-                        }
-                        .onChange(of: customMessage) { _ in
-                            saveCustomMessage()
-                        }
-                }
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
+                    // Custom Message Section
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Status Message")
+                            .font(.headline)
 
-                // Gym Status Buttons
-                VStack(spacing: 16) {
-                    Text("Set Your Gym Status")
-                        .font(.headline)
+                        TextField("What's your status message?", text: $customMessage)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .onSubmit {
+                                saveCustomMessage()
+                            }
+                            .onChange(of: customMessage) { _ in
+                                saveCustomMessage()
+                            }
+                    }
+                    .padding()
+                    .background(Color.white.opacity(0.9))
+                    .cornerRadius(12)
 
-                    HStack(spacing: 12) {
-                        StatusButton(title: "At Gym", color: .green) {
-                            updateStatus(status: .inGym)
-                        }
-                        StatusButton(title: "Going", color: .orange) {
-                            updateStatus(status: .goingToGym)
-                        }
-                        StatusButton(title: "No Gym", color: .red) {
-                            updateStatus(status: .notInGym)
+                    // Gym Status Buttons
+                    VStack(spacing: 16) {
+                        Text("Set Your Gym Status")
+                            .font(.headline)
+                            .foregroundColor(.white)
+
+                        HStack(spacing: 12) {
+                            StatusButton(title: "At Gym", color: .green) {
+                                updateStatus(status: .inGym)
+                            }
+                            StatusButton(title: "Going", color: .orange) {
+                                updateStatus(status: .goingToGym)
+                            }
+                            StatusButton(title: "No Gym", color: .red) {
+                                updateStatus(status: .notInGym)
+                            }
                         }
                     }
-                }
 
-                Spacer()
+                    Spacer()
+                }
+                .padding()
             }
-            .padding()
         }
         .onAppear {
             fetchUserStatus()
