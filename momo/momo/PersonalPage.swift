@@ -1,6 +1,7 @@
 import SwiftUI
 import Firebase
 import FirebaseFirestore
+import FirebaseAuth
 
 struct PersonalPage: View {
     @Environment(\.dismiss) var dismiss
@@ -46,32 +47,59 @@ struct PersonalPage: View {
                                     .foregroundColor(.white)
                             )
                             .shadow(radius: 10)
-
+                        
+                        // Showing User's Name
                         Text(userName)
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-
+                        
+                        // Showing Current Gym Status
                         Text("Current Status: \(statusMessage)")
                             .font(.subheadline)
                             .foregroundColor(.white.opacity(0.8))
                             .padding(.top, 4)
                     }
-
+                    
                     // Custom Message Section
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Status Message")
                             .font(.headline)
-
+                        
                         TextField("What's your status message?", text: $customMessage)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .onSubmit {
+                        
+                        HStack(spacing:12){
+                            Button(action:{
                                 saveCustomMessage()
+                            }){
+                                Text("Send")
+                                    .foregroundColor(Color.white)
+                                    .padding(.horizontal,12)
+                                    .padding(.vertical,8)
+                                    .background(Color.blue)
+                                    .cornerRadius(8)
+                                
                             }
-                            .onChange(of: customMessage) { _ in
-                                saveCustomMessage()
+                            Button(action:{
+                                deleteStatusMessage()
+                            }){
+                                Text("Delete Status")
+                                    .foregroundColor(Color.white)
+                                    .padding(.horizontal,12)
+                                    .padding(.vertical,8)
+                                    .background(Color.red)
+                                    .cornerRadius(8)
                             }
+                        }
                     }
+//                            .onSubmit {
+//                                saveCustomMessage()
+//                            }
+//                            .onChange(of: customMessage) { _ in
+//                                saveCustomMessage()
+//                            }
+//                    }
                     .padding()
                     .background(Color.white.opacity(0.9))
                     .cornerRadius(12)
@@ -81,7 +109,7 @@ struct PersonalPage: View {
                         Text("Set Your Gym Status")
                             .font(.headline)
                             .foregroundColor(.white)
-
+                        
                         HStack(spacing: 12) {
                             StatusButton(title: "At Gym", color: .green) {
                                 updateStatus(status: .inGym)
@@ -94,7 +122,18 @@ struct PersonalPage: View {
                             }
                         }
                     }
-
+                    
+                    Spacer(minLength:100)
+                    //Logout Button
+                    Button(){
+                        logOut()
+                    }
+                    label:{
+                        Text("Log Out")
+                        .font(.title)
+                        .foregroundColor(Color.red)
+                        .fontWeight(.medium)
+                    }
                     Spacer()
                 }
                 .padding()
@@ -104,39 +143,70 @@ struct PersonalPage: View {
             fetchUserStatus()
         }
     }
+    //Creating LogOut Button Logic-Reset Authetification Values
+    func logOut() {
+        // Clearing identification values for @Appstorage
+        UserDefaults.standard.set(false, forKey: "isLoggedIn")
+        UserDefaults.standard.removeObject(forKey: "userId")
+        UserDefaults.standard.removeObject(forKey: "userName")
 
+        // Signing-Out from FireBase authentication
+        do {
+            try Auth.auth().signOut()
+            print("Signed out successfully")
+        } catch {
+            print("Sign out error: \(error.localizedDescription)")
+        }
+    }
+
+    //Updating the Gym Status
     func updateStatus(status: GymStatus) {
         db.collection("users").document(userID).setData([
             "gymStatus": status.rawValue,
             "statusMessage": customMessage
         ], merge: true) { error in
             if let error = error {
-                print("❌ Error updating status: \(error)")
+                print("Error updating status: \(error)")
             } else {
                 DispatchQueue.main.async {
                     statusMessage = status.rawValue
-                    print("✅ Gym status updated to \(status.rawValue)")
+                    print("Gym status updated to \(status.rawValue)")
                 }
             }
         }
     }
 
+    // Storing Custom Message Input
     func saveCustomMessage() {
         db.collection("users").document(userID).setData([
             "statusMessage": customMessage
         ], merge: true) { error in
             if let error = error {
-                print("❌ Error updating custom message: \(error)")
+                print("Error updating custom message: \(error)")
             } else {
-                print("✅ Custom message updated: \(customMessage)")
+                print("Custom message updated: \(customMessage)")
             }
         }
     }
+        func deleteStatusMessage() {
+            customMessage = ""
+            
+            db.collection("users").document(userID).updateData(["statusMessage": FieldValue.delete()])
+            { error in
+                if let error = error {
+                    print("Error in deleting status message")
+                } else{
+                    print("Succesfully deleted status message")
+                }
+            }
+        }
+        
 
+    // Fetching User's Status to show updated
     func fetchUserStatus() {
         db.collection("users").document(userID).getDocument { snapshot, error in
             if let error = error {
-                print("❌ Error fetching status: \(error)")
+                print("Error fetching status: \(error)")
                 return
             }
 
@@ -144,14 +214,14 @@ struct PersonalPage: View {
                 if let savedStatus = data["gymStatus"] as? String {
                     DispatchQueue.main.async {
                         statusMessage = savedStatus
-                        print("✅ Retrieved gym status: \(savedStatus)")
+                        print("Retrieved gym status: \(savedStatus)")
                     }
                 }
 
                 if let savedMessage = data["statusMessage"] as? String {
                     DispatchQueue.main.async {
                         customMessage = savedMessage
-                        print("✅ Retrieved custom message: \(savedMessage)")
+                        print("Retrieved custom message: \(savedMessage)")
                     }
                 }
             }
@@ -159,6 +229,7 @@ struct PersonalPage: View {
     }
 }
 
+//Creating Template for Gym Status Buttons
 struct StatusButton: View {
     let title: String
     let color: Color
