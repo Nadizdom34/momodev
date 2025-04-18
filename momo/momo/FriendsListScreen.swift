@@ -11,32 +11,46 @@ struct FriendsListScreen: View {
 
     var body: some View {
         NavigationStack {
-            List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \.id) { friend in
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text(friend.name)
-                            .font(.headline)
-                        Spacer()
-                        Text(friend.status.rawValue)
-                            .foregroundColor(friend.status.color)
-                    }
+            ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(red: 1.0, green: 0.85, blue: 0.95), // blush pink
+                        Color(red: 1.0, green: 0.7, blue: 0.85)   // soft rose
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
 
-                    if let message = friend.message, !message.isEmpty {
-                        Text("\"\(message)\"")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                    }
+                List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \.id) { friend in
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text(friend.name)
+                                .font(.headline)
+                            Spacer()
+                            Text(friend.status.rawValue)
+                                .foregroundColor(friend.status.color)
+                        }
 
-                    Button(action: {
-                        sendGymPing(to: friend.id)
-                    }) {
-                        Text("Notify: I'm at the gym")
-                            .font(.caption)
-                            .foregroundColor(.blue)
-                            .padding(.top, 4)
+                        if let message = friend.message, !message.isEmpty {
+                            Text("\"\(message)\"")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                        }
+
+                        Button(action: {
+                            sendGymPing(to: friend.id)
+                        }) {
+                            Text("Notify: I'm at the gym")
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                                .padding(.top, 4)
+                        }
                     }
+                    .padding(.vertical, 6)
+                    .listRowBackground(Color.clear) // So gradient shows through
                 }
-                .padding(.vertical, 6)
+                .scrollContentBackground(.hidden) // Removes default white background
             }
             .navigationTitle("Friends")
             .toolbar {
@@ -57,6 +71,8 @@ struct FriendsListScreen: View {
             }
         }
     }
+
+
 
     func listenToFriends() {
         guard let userId = userId, !userId.isEmpty else { return }

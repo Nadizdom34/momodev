@@ -12,6 +12,9 @@ struct PersonalPage: View {
     let userData: [String: Any]
     private let db = Firestore.firestore()
 
+    @State private var showBubble = false
+    @State private var bubbleText = ""
+
     var userID: String {
         userData["id"] as? String ?? "unknown"
     }
@@ -20,12 +23,16 @@ struct PersonalPage: View {
         userData["name"] as? String ?? "User"
     }
 
+    var remainingCharacters: Int {
+        max(0, 50 - customMessage.count)
+    }
+
     var body: some View {
         ZStack {
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(red: 0.6, green: 0.4, blue: 0.9), // soft purple
-                    Color(red: 1.0, green: 0.7, blue: 0.85) // soft pink
+                    Color(red: 0.6, green: 0.4, blue: 0.9),
+                    Color(red: 1.0, green: 0.7, blue: 0.85)
                 ]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
@@ -33,84 +40,120 @@ struct PersonalPage: View {
             .ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 24) {
-                    // Profile Header
-                    VStack(spacing: 16) {
+                VStack(spacing: 20) {
+                    // MARK: - Profile Header
+                    VStack(spacing: 12) {
                         Circle()
                             .fill(Color.white.opacity(0.2))
-                            .frame(width: 180, height: 180)
+                            .frame(width: 160, height: 160)
                             .overlay(
                                 Image(systemName: "person.fill")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 100, height: 100)
+                                    .frame(width: 90, height: 90)
                                     .foregroundColor(.white)
                             )
-                            .shadow(radius: 10)
-                        
-                        // Showing User's Name
+                            .shadow(radius: 8)
+
                         Text(userName)
-                            .font(.title)
+                            .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-                        
-                        // Showing Current Gym Status
+
                         Text("Current Status: \(statusMessage)")
                             .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.8))
-                            .padding(.top, 4)
+                            .foregroundColor(.white.opacity(0.85))
+
+                        Group {
+                            if !customMessage.isEmpty {
+                                Text("“\(customMessage)”")
+                                    .font(.body)
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 24)
+                            } else {
+                                Text(" ")
+                                    .font(.body)
+                                    .padding(.horizontal, 24)
+                                    .hidden()
+                            }
+                        }
+                        .frame(height: 24)
                     }
-                    
-                    // Custom Message Section
-                    VStack(alignment: .leading, spacing: 8) {
+
+                    // MARK: - Status Message Section (Compact)
+                    VStack(alignment: .leading, spacing: 6) {
                         Text("Status Message")
-                            .font(.headline)
-                        
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+
                         TextField("What's your status message?", text: $customMessage)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                        
-                        HStack(spacing:12){
-                            Button(action:{
-                                saveCustomMessage()
-                            }){
-                                Text("Send")
-                                    .foregroundColor(Color.white)
-                                    .padding(.horizontal,12)
-                                    .padding(.vertical,8)
-                                    .background(Color.blue)
-                                    .cornerRadius(8)
-                                
+                            .onChange(of: customMessage) { newValue in
+                                if newValue.count > 50 {
+                                    customMessage = String(newValue.prefix(50))
+                                }
                             }
-                            Button(action:{
-                                deleteStatusMessage()
-                            }){
-                                Text("Delete Status")
-                                    .foregroundColor(Color.white)
-                                    .padding(.horizontal,12)
-                                    .padding(.vertical,8)
-                                    .background(Color.red)
+
+                        HStack {
+                            Spacer()
+                            Text("\(remainingCharacters) characters left")
+                                .font(.caption2)
+                                .foregroundColor(remainingCharacters <= 5 ? .red : .gray)
+                        }
+
+                        HStack(alignment: .top) {
+                            HStack(spacing: 8) {
+                                Button(action: {
+                                    saveCustomMessage()
+                                }) {
+                                    Text("Send")
+                                        .font(.caption)
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 6)
+                                        .background(Color.blue)
+                                        .cornerRadius(6)
+                                }
+
+                                Button(action: {
+                                    deleteStatusMessage()
+                                }) {
+                                    Text("Delete")
+                                        .font(.caption)
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 6)
+                                        .background(Color.red)
+                                        .cornerRadius(6)
+                                }
+                            }
+
+                            Spacer()
+
+                            if showBubble {
+                                Text(bubbleText)
+                                    .font(.caption2)
+                                    .padding(6)
+                                    .background(Color.black.opacity(0.85))
+                                    .foregroundColor(.white)
                                     .cornerRadius(8)
+                                    .transition(.opacity.combined(with: .scale))
+                                    .padding(.top, 4)
                             }
                         }
                     }
-//                            .onSubmit {
-//                                saveCustomMessage()
-//                            }
-//                            .onChange(of: customMessage) { _ in
-//                                saveCustomMessage()
-//                            }
-//                    }
-                    .padding()
+                    .padding(10)
                     .background(Color.white.opacity(0.9))
-                    .cornerRadius(12)
+                    .cornerRadius(10)
 
-                    // Gym Status Buttons
-                    VStack(spacing: 16) {
+                    // MARK: - Gym Status Buttons
+                    VStack(spacing: 12) {
                         Text("Set Your Gym Status")
                             .font(.headline)
                             .foregroundColor(.white)
-                        
-                        HStack(spacing: 12) {
+
+                        HStack(spacing: 10) {
                             StatusButton(title: "At Gym", color: .green) {
                                 updateStatus(status: .inGym)
                             }
@@ -122,18 +165,19 @@ struct PersonalPage: View {
                             }
                         }
                     }
-                    
-                    Spacer(minLength:100)
-                    //Logout Button
-                    Button(){
+
+                    Spacer(minLength: 60)
+
+                    // MARK: - Logout Button
+                    Button(action: {
                         logOut()
-                    }
-                    label:{
+                    }) {
                         Text("Log Out")
-                        .font(.title)
-                        .foregroundColor(Color.red)
-                        .fontWeight(.medium)
+                            .font(.title3)
+                            .foregroundColor(.red)
+                            .fontWeight(.medium)
                     }
+
                     Spacer()
                 }
                 .padding()
@@ -143,23 +187,22 @@ struct PersonalPage: View {
             fetchUserStatus()
         }
     }
-    //Creating LogOut Button Logic-Reset Authetification Values
-    func logOut() {
-        // Clearing identification values for @Appstorage
-        UserDefaults.standard.set(false, forKey: "isLoggedIn")
-        UserDefaults.standard.removeObject(forKey: "userId")
-        UserDefaults.standard.removeObject(forKey: "userName")
 
-        // Signing-Out from FireBase authentication
-        do {
-            try Auth.auth().signOut()
-            print("Signed out successfully")
-        } catch {
-            print("Sign out error: \(error.localizedDescription)")
+    // MARK: - Bubble Feedback
+    func showFloatingBubble(with text: String) {
+        bubbleText = text
+        withAnimation {
+            showBubble = true
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation {
+                showBubble = false
+            }
         }
     }
 
-    //Updating the Gym Status
+    // MARK: - Firestore Functions
     func updateStatus(status: GymStatus) {
         db.collection("users").document(userID).setData([
             "gymStatus": status.rawValue,
@@ -176,7 +219,6 @@ struct PersonalPage: View {
         }
     }
 
-    // Storing Custom Message Input
     func saveCustomMessage() {
         db.collection("users").document(userID).setData([
             "statusMessage": customMessage
@@ -184,25 +226,27 @@ struct PersonalPage: View {
             if let error = error {
                 print("Error updating custom message: \(error)")
             } else {
+                showFloatingBubble(with: "Sent ✓")
                 print("Custom message updated: \(customMessage)")
             }
         }
     }
-        func deleteStatusMessage() {
-            customMessage = ""
-            
-            db.collection("users").document(userID).updateData(["statusMessage": FieldValue.delete()])
-            { error in
-                if let error = error {
-                    print("Error in deleting status message")
-                } else{
-                    print("Succesfully deleted status message")
-                }
+
+    func deleteStatusMessage() {
+        customMessage = ""
+
+        db.collection("users").document(userID).updateData([
+            "statusMessage": FieldValue.delete()
+        ]) { error in
+            if let error = error {
+                print("Error in deleting status message: \(error.localizedDescription)")
+            } else {
+                showFloatingBubble(with: "Deleted 🗑️")
+                print("Successfully deleted status message")
             }
         }
-        
+    }
 
-    // Fetching User's Status to show updated
     func fetchUserStatus() {
         db.collection("users").document(userID).getDocument { snapshot, error in
             if let error = error {
@@ -227,9 +271,22 @@ struct PersonalPage: View {
             }
         }
     }
+
+    func logOut() {
+        UserDefaults.standard.set(false, forKey: "isLoggedIn")
+        UserDefaults.standard.removeObject(forKey: "userId")
+        UserDefaults.standard.removeObject(forKey: "userName")
+
+        do {
+            try Auth.auth().signOut()
+            print("Signed out successfully")
+        } catch {
+            print("Sign out error: \(error.localizedDescription)")
+        }
+    }
 }
 
-//Creating Template for Gym Status Buttons
+// MARK: - StatusButton Component
 struct StatusButton: View {
     let title: String
     let color: Color
@@ -238,12 +295,13 @@ struct StatusButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
+                .font(.subheadline)
                 .fontWeight(.medium)
-                .padding()
+                .padding(.vertical, 10)
                 .frame(maxWidth: .infinity)
                 .background(color)
                 .foregroundColor(.white)
-                .cornerRadius(12)
+                .cornerRadius(10)
         }
     }
 }

@@ -6,38 +6,53 @@ struct AddFriendListScreen: View {
     @State private var inputCode = ""
     @State private var errorMessage: String?
     @AppStorage("userId") private var userId: String?
+    @State private var currentCode: String?
 
     private let db = Firestore.firestore()
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section(header: Text("Enter Friend Code")) {
-                    TextField("6-character code", text: $inputCode)
-                        .autocapitalization(.allCharacters)
+            ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(red: 1.0, green: 0.85, blue: 0.95), // blush pink
+                        Color(red: 1.0, green: 0.7, blue: 0.85)   // soft rose
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
 
-                    Button("Add Friend by Code") {
-                        addFriendByCode()
+                Form {
+                    Section(header: Text("Enter Friend Code")) {
+                        TextField("6-character code", text: $inputCode)
+                            .autocapitalization(.allCharacters)
+
+                        Button("Add Friend by Code") {
+                            addFriendByCode()
+                        }
+                    }
+
+                    Section(header: Text("Your Invite Code")) {
+                        if let userId = userId {
+                            Button("Generate New Code") {
+                                generateFriendCode(for: userId)
+                            }
+
+                            if let code = currentCode {
+                                Text("Code: \(code)")
+                                    .font(.headline)
+                            }
+                        }
+                    }
+
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
                     }
                 }
-
-                Section(header: Text("Your Invite Code")) {
-                    if let userId = userId {
-                        Button("Generate New Code") {
-                            generateFriendCode(for: userId)
-                        }
-
-                        if let code = currentCode {
-                            Text("Code: \(code)")
-                                .font(.headline)
-                        }
-                    }
-                }
-
-                if let errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                }
+                .scrollContentBackground(.hidden) // Hide default white background
+                .background(Color.clear)
             }
             .navigationTitle("Add Friend")
             .toolbar {
@@ -47,10 +62,10 @@ struct AddFriendListScreen: View {
                     }
                 }
             }
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
-
-    @State private var currentCode: String?
 
     func generateFriendCode(for userId: String) {
         let code = randomCode(length: 6)
@@ -120,4 +135,3 @@ struct AddFriendListScreen: View {
         return String((0..<length).map { _ in characters.randomElement()! })
     }
 }
-
