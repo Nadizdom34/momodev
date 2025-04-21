@@ -81,7 +81,26 @@ struct PersonalPage: View {
                         .frame(height: 24)
                     }
 
-                    // MARK: - Status Message Section (Compact)
+                    // MARK: - Gym Status Buttons (moved up)
+                    VStack(spacing: 12) {
+                        Text("Set Your Gym Status")
+                            .font(.headline)
+                            .foregroundColor(.white)
+
+                        HStack(spacing: 10) {
+                            StatusButton(title: "No Gym", color: .red) {
+                                updateStatus(status: .notInGym)
+                            }
+                            StatusButton(title: "Going", color: .orange) {
+                                updateStatus(status: .goingToGym)
+                            }
+                            StatusButton(title: "At Gym", color: .green) {
+                                updateStatus(status: .inGym)
+                            }
+                        }
+                    }
+
+                    // MARK: - Status Message Section (below gym buttons)
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Status Message")
                             .font(.subheadline)
@@ -105,26 +124,25 @@ struct PersonalPage: View {
                         HStack(alignment: .top) {
                             HStack(spacing: 8) {
                                 Button(action: {
-                                    saveCustomMessage()
-                                }) {
-                                    Text("Send")
-                                        .font(.caption)
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 6)
-                                        .background(Color.blue)
-                                        .cornerRadius(6)
-                                }
-
-                                Button(action: {
                                     deleteStatusMessage()
                                 }) {
-                                    Text("Delete")
+                                    Text("Clear")
                                         .font(.caption)
                                         .foregroundColor(.white)
                                         .padding(.horizontal, 10)
                                         .padding(.vertical, 6)
                                         .background(Color.red)
+                                        .cornerRadius(6)
+                                }
+                                Button(action: {
+                                    saveCustomMessage()
+                                }) {
+                                    Text("Update")
+                                        .font(.caption)
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 6)
+                                        .background(Color.blue)
                                         .cornerRadius(6)
                                 }
                             }
@@ -147,35 +165,14 @@ struct PersonalPage: View {
                     .background(Color.white.opacity(0.9))
                     .cornerRadius(10)
 
-                    // MARK: - Gym Status Buttons
-                    VStack(spacing: 12) {
-                        Text("Set Your Gym Status")
-                            .font(.headline)
-                            .foregroundColor(.white)
-
-                        HStack(spacing: 10) {
-                            StatusButton(title: "At Gym", color: .green) {
-                                updateStatus(status: .inGym)
-                            }
-                            StatusButton(title: "Going", color: .orange) {
-                                updateStatus(status: .goingToGym)
-                            }
-                            StatusButton(title: "No Gym", color: .red) {
-                                updateStatus(status: .notInGym)
-                            }
-                        }
-                    }
-
-                    Spacer(minLength: 60)
-
-                    // MARK: - Logout Button
+                    // MARK: - Smaller Log Out Button
                     Button(action: {
                         logOut()
                     }) {
                         Text("Log Out")
-                            .font(.title3)
+                            .font(.footnote)
                             .foregroundColor(.red)
-                            .fontWeight(.medium)
+                            .padding(.top, 4)
                     }
 
                     Spacer()
@@ -226,7 +223,7 @@ struct PersonalPage: View {
             if let error = error {
                 print("Error updating custom message: \(error)")
             } else {
-                showFloatingBubble(with: "Sent ✓")
+                showFloatingBubble(with: "Sent ✅")
                 print("Custom message updated: \(customMessage)")
             }
         }
