@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseFirestore
+import RiveRuntime
 
 struct ContentView: View {
     @State private var isLoggedIn = false

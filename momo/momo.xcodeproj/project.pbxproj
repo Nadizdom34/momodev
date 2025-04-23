@@ -32,6 +32,7 @@
 		3FD2219A2D9205DA00823C3E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD221992D9205DA00823C3E /* FirebaseFirestore */; };
 		3FD2219C2D9205DA00823C3E /* FirebaseInAppMessaging-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD2219B2D9205DA00823C3E /* FirebaseInAppMessaging-Beta */; };
 		3FD2219E2D9205DA00823C3E /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD2219D2D9205DA00823C3E /* FirebaseMessaging */; };
+		EE86310D2DB97D9E00634313 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = EE86310C2DB97D9E00634313 /* RiveRuntime */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +110,7 @@
 				3F79D5C52DA4A8DE00EA948A /* FirebaseDynamicLinks in Frameworks */,
 				3F79D5B32DA4A8DD00EA948A /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
 				3F79D5BB2DA4A8DD00EA948A /* FirebaseAuth in Frameworks */,
+				EE86310D2DB97D9E00634313 /* RiveRuntime in Frameworks */,
 				3F79D5B72DA4A8DD00EA948A /* FirebaseAppCheck in Frameworks */,
 				3F79D5CF2DA4A8DE00EA948A /* FirebaseMLModelDownloader in Frameworks */,
 				3FD2219A2D9205DA00823C3E /* FirebaseFirestore in Frameworks */,
@@ -211,6 +213,7 @@
 				3F79D5D42DA4A8DE00EA948A /* FirebaseStorage */,
 				3F79D5D62DA4A8DE00EA948A /* FirebaseStorageCombine-Community */,
 				3F79D5D82DA4A8DE00EA948A /* FirebaseVertexAI */,
+				EE86310C2DB97D9E00634313 /* RiveRuntime */,
 			);
 			productName = momo;
 			productReference = 3FF145642D77C7520001FC29 /* momo.app */;
@@ -296,6 +299,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				EE8630F92DB8097200634313 /* XCRemoteSwiftPackageReference "rive-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3FF145652D77C7520001FC29 /* Products */;
@@ -667,6 +671,14 @@
 				minimumVersion = 11.10.0;
 			};
 		};
+		EE8630F92DB8097200634313 /* XCRemoteSwiftPackageReference "rive-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rive-app/rive-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -789,6 +801,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3FD221962D9205DA00823C3E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
+		};
+		EE86310C2DB97D9E00634313 /* RiveRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE8630F92DB8097200634313 /* XCRemoteSwiftPackageReference "rive-ios" */;
+			productName = RiveRuntime;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
