@@ -34,8 +34,8 @@ struct HomeScreen: View {
 //                    .foregroundColor(.white)
 //                    .shadow(radius: 10)
                 characterAnimation.view()
-                                    .frame(width: 200, height: 200)
-                                    .shadow(radius: 10)
+                                    .frame(width: 400, height: 400)
+                                    .shadow(radius: 5)
 
                 Text("Track your fitness. Stay motivated. Connect with friends.")
                     .multilineTextAlignment(.center)

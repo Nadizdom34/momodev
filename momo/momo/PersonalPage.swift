@@ -8,6 +8,8 @@ struct PersonalPage: View {
     @State private var statusMessage = "No Gym"
     @State private var customMessage = ""
     @State private var friends: [Friend] = []
+    @State private var selectedImageIndex = 0
+    let profileImages = ["sleepy cat", "gym cat", "walking cat"]
 
     let userData: [String: Any]
     private let db = Firestore.firestore()
@@ -47,13 +49,25 @@ struct PersonalPage: View {
                             .fill(Color.white.opacity(0.2))
                             .frame(width: 160, height: 160)
                             .overlay(
-                                Image(systemName: "person.fill")
+                                Image(profileImages[selectedImageIndex])
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 90, height: 90)
                                     .foregroundColor(.white)
                             )
                             .shadow(radius: 8)
+                        Picker("Select Profile Image", selection: $selectedImageIndex) {
+                            ForEach(0..<profileImages.count, id: \.self) { index in
+                                Image(profileImages[index])
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 40, height: 40)
+                                    .clipShape(Circle())
+                                    .tag(index)
+                            }
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .padding(.horizontal)
 
                         Text(userName)
                             .font(.title2)
