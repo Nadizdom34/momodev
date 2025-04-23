@@ -80,24 +80,44 @@ struct QuickLoginView: View {
         }
 
         let db = Firestore.firestore()
-        let newUserRef = db.collection("users").document()
-        let userData: [String: Any] = [
-            "name": userName,
-            "joined": Timestamp(),
-            "gymStatus": GymStatus.notInGym.rawValue,
-            "statusMessage": ""
-        ]
+        let usersRef = db.collection("users")
 
-        newUserRef.setData(userData) { err in
+        usersRef.whereField("name", isEqualTo: userName).getDocuments { snapshot, err in
             if let err = err {
-                self.error = "Failed to create user: \(err.localizedDescription)"
-            } else {
-                userId = newUserRef.documentID
+                self.error = "Error checking existing users: \(err.localizedDescription)"
+                return
+            }
+
+            if let doc = snapshot?.documents.first {
+                // Existing user found reuse it
+                userId = doc.documentID
                 storedUserName = userName
 
-                var finalData = userData
-                finalData["id"] = userId
-                onLoginSuccess(finalData)
+                var existingData = doc.data()
+                existingData["id"] = userId
+                onLoginSuccess(existingData)
+            } else {
+                // No user found create a new one
+                let newUserRef = usersRef.document()
+                let userData: [String: Any] = [
+                    "name": userName,
+                    "joined": Timestamp(),
+                    "gymStatus": GymStatus.notInGym.rawValue,
+                    "statusMessage": ""
+                ]
+
+                newUserRef.setData(userData) { err in
+                    if let err = err {
+                        self.error = "Failed to create user: \(err.localizedDescription)"
+                    } else {
+                        userId = newUserRef.documentID
+                        storedUserName = userName
+
+                        var finalData = userData
+                        finalData["id"] = userId
+                        onLoginSuccess(finalData)
+                    }
+                }
             }
         }
     }

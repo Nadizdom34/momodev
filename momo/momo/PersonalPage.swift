@@ -285,8 +285,8 @@ struct PersonalPage: View {
 
     func logOut() {
         UserDefaults.standard.set(false, forKey: "isLoggedIn")
-        UserDefaults.standard.removeObject(forKey: "userId")
-        UserDefaults.standard.removeObject(forKey: "userName")
+        //UserDefaults.standard.removeObject(forKey: "userId")
+        //UserDefaults.standard.removeObject(forKey: "userName")
 
         do {
             try Auth.auth().signOut()
