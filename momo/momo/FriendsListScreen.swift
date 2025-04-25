@@ -48,9 +48,9 @@ struct FriendsListScreen: View {
                         }
                     }
                     .padding(.vertical, 6)
-                    .listRowBackground(Color.clear) // So gradient shows through
+                    .listRowBackground(Color.clear)
                 }
-                .scrollContentBackground(.hidden) // Removes default white background
+                .scrollContentBackground(.hidden) 
             }
             .navigationTitle("Friends")
             .toolbar {

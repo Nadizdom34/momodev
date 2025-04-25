@@ -26,7 +26,7 @@ struct RootView: View {
 
     private func fetchUserData() {
         guard let unwrappedUserId = userId, !unwrappedUserId.isEmpty else {
-            print("❌ Missing or empty userId – logging out.")
+            print(" Missing or empty userId – logging out.")
             self.isLoggedIn = false
             return
         }

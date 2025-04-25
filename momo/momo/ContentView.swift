@@ -11,7 +11,7 @@ struct ContentView: View {
     var body: some View {
         Group {
             if isLoggedIn, let userData = userData {
-                MainTabView(userData: userData) // ✅ Use new MainTabView
+                MainTabView(userData: userData) 
             } else {
                 QuickLoginView { data in
                     self.userData = data
