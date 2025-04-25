@@ -32,7 +32,7 @@ struct ContentView: View {
                 FriendsListScreen()
                     .tabItem { Label("Friends", systemImage: "person.2.fill") }
 
-                PersonalPage(userData: userData) // ✅ Pass userData here
+                PersonalPage(userData: userData) 
                     .tabItem { Label("My Page", systemImage: "person.crop.circle") }
             }
         }

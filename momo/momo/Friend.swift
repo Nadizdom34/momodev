@@ -36,7 +36,7 @@ struct AddFriendScreen: View {
 
     func searchFriendByPhone() {
         guard let userID = Auth.auth().currentUser?.uid else {
-            print("❌ User is not authenticated")
+            print(" User is not authenticated")
             return
         }
 
@@ -45,12 +45,12 @@ struct AddFriendScreen: View {
         db.collection("users").whereField("phone", isEqualTo: formattedPhone)
             .getDocuments { snapshot, error in
                 if let error = error {
-                    print("❌ Error searching user: \(error)")
+                    print(" Error searching user: \(error)")
                     return
                 }
 
                 guard let document = snapshot?.documents.first else {
-                    print("❌ No user found with phone number")
+                    print(" No user found with phone number")
                     return
                 }
 
@@ -58,7 +58,7 @@ struct AddFriendScreen: View {
                 guard let name = data["name"] as? String,
                       let statusString = data["gymStatus"] as? String,
                       let status = GymStatus(rawValue: statusString) else {
-                    print("❌ Invalid user data")
+                    print(" Invalid user data")
                     return
                 }
 
@@ -72,13 +72,13 @@ struct AddFriendScreen: View {
                         "message": message ?? ""
                     ]) { error in
                         if let error = error {
-                            print("❌ Error saving friend: \(error)")
+                            print(" Error saving friend: \(error)")
                         } else {
                             DispatchQueue.main.async {
                                 friends.append(friend)
                                 dismiss()
                             }
-                            print("✅ Added friend: \(friend.name)")
+                            print(" Added friend: \(friend.name)")
                         }
                     }
             }

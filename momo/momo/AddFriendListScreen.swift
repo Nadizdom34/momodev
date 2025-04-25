@@ -80,7 +80,7 @@ struct AddFriendListScreen: View {
                 errorMessage = "Failed to generate code: \(error.localizedDescription)"
             } else {
                 currentCode = code
-                print("✅ Generated invite code: \(code)")
+                print(" Generated invite code: \(code)")
             }
         }
     }
@@ -123,7 +123,7 @@ struct AddFriendListScreen: View {
                     if let err = err {
                         errorMessage = "Failed to add friend: \(err.localizedDescription)"
                     } else {
-                        print("✅ Added friend from code: \(creatorId)")
+                        print(" Added friend from code: \(creatorId)")
                         dismiss()
                     }
                 }

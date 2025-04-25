@@ -28,7 +28,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
 
-    // 👇 This is the key method Firebase Phone Auth needs
+    // Key method Firebase Phone Auth needs
     func application(_ application: UIApplication,
                      didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {

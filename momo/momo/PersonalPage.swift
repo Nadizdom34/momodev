@@ -237,7 +237,7 @@ struct PersonalPage: View {
             if let error = error {
                 print("Error updating custom message: \(error)")
             } else {
-                showFloatingBubble(with: "Sent ✅")
+                showFloatingBubble(with: "Sent")
                 print("Custom message updated: \(customMessage)")
             }
         }

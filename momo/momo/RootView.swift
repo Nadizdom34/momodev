@@ -36,7 +36,7 @@ struct RootView: View {
             if let data = snapshot?.data() {
                 self.userData = data.merging(["id": unwrappedUserId]) { $1 }
             } else {
-                print("❌ Failed to fetch user data: \(error?.localizedDescription ?? "unknown error")")
+                print("Failed to fetch user data: \(error?.localizedDescription ?? "unknown error")")
                 self.isLoggedIn = false
             }
         }

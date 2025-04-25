@@ -81,7 +81,7 @@ struct FriendsListScreen: View {
         db.collection("users").document(userId).collection("friends")
             .addSnapshotListener { snapshot, error in
                 if let error = error {
-                    print("❌ Error listening to friend list: \(error)")
+                    print("Error listening to friend list: \(error)")
                     return
                 }
 
@@ -93,7 +93,7 @@ struct FriendsListScreen: View {
                     let listener = db.collection("users").document(friendID)
                         .addSnapshotListener { snap, error in
                             if let error = error {
-                                print("❌ Error listening to friend profile: \(error)")
+                                print("Error listening to friend profile: \(error)")
                                 return
                             }
 
@@ -101,7 +101,7 @@ struct FriendsListScreen: View {
                                   let name = data["name"] as? String,
                                   let statusRaw = data["gymStatus"] as? String,
                                   let status = GymStatus(rawValue: statusRaw) else {
-                                print("⚠️ Skipping friend \(friendID) due to missing or invalid data")
+                                print("Skipping friend \(friendID) due to missing or invalid data")
                                 return
                             }
 
@@ -130,9 +130,9 @@ struct FriendsListScreen: View {
     func sendGymPing(to friendId: String) {
         Functions.functions().httpsCallable("sendGymPing").call(["friendId": friendId]) { result, error in
             if let error = error {
-                print("❌ Failed to send gym ping: \(error.localizedDescription)")
+                print("Failed to send gym ping: \(error.localizedDescription)")
             } else {
-                print("✅ Sent gym ping to \(friendId)")
+                print("Sent gym ping to \(friendId)")
             }
         }
     }
