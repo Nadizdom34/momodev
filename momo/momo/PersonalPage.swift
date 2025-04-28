@@ -206,6 +206,23 @@ struct PersonalPage: View {
             fetchUserStatus()
         }
     }
+    //records the amount of times per week a user checks in
+    func recordCheckIn() {
+        let checkInData: [String: Any] = [
+            "timestamp": Timestamp(date: Date())
+        ]
+        
+        db.collection("checkins")
+            .document(self.userID)
+            .collection("userCheckins")
+            .addDocument(data: checkInData) { error in
+                if let error = error {
+                    print("Error recording check-in: \(error.localizedDescription)")
+                } else {
+                    print("Successfully recorded a check-in")
+                }
+            }
+    }
 
     //Displays a floating bubble for feedback
     func showFloatingBubble(with text: String) {
@@ -233,6 +250,9 @@ struct PersonalPage: View {
                 DispatchQueue.main.async {
                     statusMessage = status.rawValue
                     print("Gym status updated to \(status.rawValue)")
+                }
+                if status == .inGym{
+                    recordCheckIn()
                 }
             }
         }
@@ -324,3 +344,4 @@ struct StatusButton: View {
         }
     }
 }
+
