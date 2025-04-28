@@ -10,7 +10,7 @@ struct PersonalPage: View {
     @State private var customMessage = ""
     @State private var friends: [Friend] = []
     @State private var selectedImageIndex = 0
-    @State private var selectedStatus: GymStatus? = nil // Track selected gym status
+    @State private var selectedStatus: GymStatus? = nil 
 
     let profileImages = ["sleepy cat", "gym cat", "walking cat"]
     let userData: [String: Any]
@@ -46,35 +46,54 @@ struct PersonalPage: View {
                 VStack(spacing: 20) {
                     // Profile Header
                     VStack(spacing: 12) {
-                        Circle()
-                            .fill(Color.white.opacity(0.2))
-                            .frame(width: 160, height: 160)
-                            .overlay(
-                                Image(profileImages[selectedImageIndex])
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 90, height: 90)
-                            )
-                            .shadow(radius: 8)
-
-                        Picker("Select Profile Image", selection: $selectedImageIndex) {
-                            ForEach(0..<profileImages.count, id: \.self) { index in
-                                Image(profileImages[index])
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 40, height: 40)
+                        HStack(spacing: 16) {
+                            Button(action: {
+                                if selectedImageIndex > 0 {
+                                    selectedImageIndex -= 1
+                                } else {
+                                    selectedImageIndex = profileImages.count - 1
+                                }
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .foregroundColor(.white)
+                                    .padding(10)
+                                    .background(Color.black.opacity(0.2))
                                     .clipShape(Circle())
-                                    .tag(index)
+                            }
+
+                            Circle()
+                                .fill(Color.white.opacity(0.2))
+                                .frame(width: 160, height: 160)
+                                .overlay(
+                                    Image(profileImages[selectedImageIndex])
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 90, height: 90)
+                                )
+                                .shadow(radius: 8)
+
+                            Button(action: {
+                                if selectedImageIndex < profileImages.count - 1 {
+                                    selectedImageIndex += 1
+                                } else {
+                                    selectedImageIndex = 0
+                                }
+                            }) {
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.white)
+                                    .padding(10)
+                                    .background(Color.black.opacity(0.2))
+                                    .clipShape(Circle())
                             }
                         }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .padding(.horizontal)
+                        .padding(.top, 4)
 
                         Text(userName)
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                     }
+
 
                     // Gym Status Buttons
                     VStack(spacing: 12) {
