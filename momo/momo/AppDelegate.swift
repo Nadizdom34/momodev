@@ -12,7 +12,7 @@ import FirebaseFirestore
 import FirebaseAuth
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-
+    //Initializes firebase and keeps track of app analytics to store
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()

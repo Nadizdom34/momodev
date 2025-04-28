@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-
+//Displays a loading page while awaiting user authentification or data fetching
 struct LoadingView: View {
     @AppStorage("userId") private var userId: String?
 

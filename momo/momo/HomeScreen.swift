@@ -1,12 +1,14 @@
 import SwiftUI
 import RiveRuntime
 
-
-
+//Displays the homescreen of our app, including animated character Momo
+//Edited by Karla
 struct HomeScreen: View {
+    //Rive animation model for displaying our character Momo
     let characterAnimation = RiveViewModel(fileName: "character_test")
     var body: some View {
         ZStack {
+            //Background UI
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 0.85, green: 0.80, blue: 0.95),
@@ -21,7 +23,7 @@ struct HomeScreen: View {
 
             VStack(spacing: 30) {
                 Spacer()
-
+                //App title
                 Text("Momo Fit")
                     .font(.system(size: 42, weight: .heavy, design: .rounded))
                     .foregroundColor(.white)
@@ -33,10 +35,11 @@ struct HomeScreen: View {
 //                    .frame(width: 180, height: 180)
 //                    .foregroundColor(.white)
 //                    .shadow(radius: 10)
+                //Sets our animated character Momo
                 characterAnimation.view()
                                     .frame(width: 400, height: 400)
                                     .shadow(radius: 5)
-
+                //App motivation
                 Text("Track your fitness. Stay motivated. Connect with friends.")
                     .multilineTextAlignment(.center)
                     .foregroundColor(.white)

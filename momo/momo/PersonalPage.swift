@@ -3,34 +3,40 @@ import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
+//Displays the user's personal page, includes: User's Momo, username, and gym status.
+//Allows user's to update their gym status and status message.
+//Allows users to logout
 struct PersonalPage: View {
     @Environment(\.dismiss) var dismiss
-    @State private var statusMessage = "No Gym"
-    @State private var customMessage = ""
-    @State private var friends: [Friend] = []
-    @State private var selectedImageIndex = 0
-    let profileImages = ["sleepy cat", "gym cat", "walking cat"]
+    @State private var statusMessage = "No Gym" //User's Gym Status set to default of "No Gym"
+    @State private var customMessage = "" // User's Custom Status Message
+    @State private var friends: [Friend] = [] // A user's friend's List
+    @State private var selectedImageIndex = 0 //Selected profile image
+    let profileImages = ["sleepy cat", "gym cat", "walking cat"] //Options for profile images
 
-    let userData: [String: Any]
+    let userData: [String: Any] //Passed in user data from login/rootview
     private let db = Firestore.firestore()
 
+    //Used for status message UI
     @State private var showBubble = false
     @State private var bubbleText = ""
 
+    //Gets the user's Firestore ID and name from userData
     var userID: String {
         userData["id"] as? String ?? "unknown"
     }
-
     var userName: String {
         userData["name"] as? String ?? "User"
     }
 
+    //Restricts number of characters for user's status message
     var remainingCharacters: Int {
         max(0, 50 - customMessage.count)
     }
-
+    
     var body: some View {
         ZStack {
+            //Background UI
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 0.6, green: 0.4, blue: 0.9),
@@ -40,11 +46,12 @@ struct PersonalPage: View {
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
-
+            //Main View of personal page
             ScrollView {
                 VStack(spacing: 20) {
-                    // MARK: - Profile Header
+                    // Profile Header
                     VStack(spacing: 12) {
+                        //Profile Picture
                         Circle()
                             .fill(Color.white.opacity(0.2))
                             .frame(width: 160, height: 160)
@@ -56,6 +63,7 @@ struct PersonalPage: View {
                                     .foregroundColor(.white)
                             )
                             .shadow(radius: 8)
+                        //Profile Image Picker
                         Picker("Select Profile Image", selection: $selectedImageIndex) {
                             ForEach(0..<profileImages.count, id: \.self) { index in
                                 Image(profileImages[index])
@@ -68,16 +76,16 @@ struct PersonalPage: View {
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .padding(.horizontal)
-
+                        //Username
                         Text(userName)
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-
+                        //Current Status Message
                         Text("Current Status: \(statusMessage)")
                             .font(.subheadline)
                             .foregroundColor(.white.opacity(0.85))
-
+                        //Displaying status message
                         Group {
                             if !customMessage.isEmpty {
                                 Text("“\(customMessage)”")
@@ -95,7 +103,7 @@ struct PersonalPage: View {
                         .frame(height: 24)
                     }
 
-                    // MARK: - Gym Status Buttons (moved up)
+                    //Gym Status Button's
                     VStack(spacing: 12) {
                         Text("Set Your Gym Status")
                             .font(.headline)
@@ -114,12 +122,12 @@ struct PersonalPage: View {
                         }
                     }
 
-                    // MARK: - Status Message Section (below gym buttons)
+                    //Status Message UI and setup
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Status Message")
                             .font(.subheadline)
                             .fontWeight(.medium)
-
+                        //Taking in characters for message
                         TextField("What's your status message?", text: $customMessage)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .onChange(of: customMessage) { newValue in
@@ -134,7 +142,7 @@ struct PersonalPage: View {
                                 .font(.caption2)
                                 .foregroundColor(remainingCharacters <= 5 ? .red : .gray)
                         }
-
+                        //Buttons for deleting and updating status message
                         HStack(alignment: .top) {
                             HStack(spacing: 8) {
                                 Button(action: {
@@ -162,7 +170,7 @@ struct PersonalPage: View {
                             }
 
                             Spacer()
-
+                            //Animated feedback bubble
                             if showBubble {
                                 Text(bubbleText)
                                     .font(.caption2)
@@ -179,7 +187,7 @@ struct PersonalPage: View {
                     .background(Color.white.opacity(0.9))
                     .cornerRadius(10)
 
-                    // MARK: - Smaller Log Out Button
+                    //Logout Button
                     Button(action: {
                         logOut()
                     }) {
@@ -199,7 +207,7 @@ struct PersonalPage: View {
         }
     }
 
-    // MARK: - Bubble Feedback
+    //Displays a floating bubble for feedback
     func showFloatingBubble(with text: String) {
         bubbleText = text
         withAnimation {
@@ -213,7 +221,7 @@ struct PersonalPage: View {
         }
     }
 
-    // MARK: - Firestore Functions
+    //Updates a user's gym status and custom message in Firestore
     func updateStatus(status: GymStatus) {
         db.collection("users").document(userID).setData([
             "gymStatus": status.rawValue,
@@ -229,7 +237,7 @@ struct PersonalPage: View {
             }
         }
     }
-
+    //Save's the user's custom message to Firestore
     func saveCustomMessage() {
         db.collection("users").document(userID).setData([
             "statusMessage": customMessage
@@ -242,7 +250,7 @@ struct PersonalPage: View {
             }
         }
     }
-
+    //Delete's the user's status message from Firestore
     func deleteStatusMessage() {
         customMessage = ""
 
@@ -257,14 +265,14 @@ struct PersonalPage: View {
             }
         }
     }
-
+    // Fetches the user's current gym status and custom message from Firestore
     func fetchUserStatus() {
         db.collection("users").document(userID).getDocument { snapshot, error in
             if let error = error {
                 print("Error fetching status: \(error)")
                 return
             }
-
+            //Getting current gym status
             if let data = snapshot?.data() {
                 if let savedStatus = data["gymStatus"] as? String {
                     DispatchQueue.main.async {
@@ -272,7 +280,7 @@ struct PersonalPage: View {
                         print("Retrieved gym status: \(savedStatus)")
                     }
                 }
-
+                //Getting current custom message
                 if let savedMessage = data["statusMessage"] as? String {
                     DispatchQueue.main.async {
                         customMessage = savedMessage
@@ -282,7 +290,7 @@ struct PersonalPage: View {
             }
         }
     }
-
+    //Logs out a user from Firebase authentication
     func logOut() {
         UserDefaults.standard.set(false, forKey: "isLoggedIn")
         //UserDefaults.standard.removeObject(forKey: "userId")
@@ -297,7 +305,7 @@ struct PersonalPage: View {
     }
 }
 
-// MARK: - StatusButton Component
+//Reusable button setup
 struct StatusButton: View {
     let title: String
     let color: Color
