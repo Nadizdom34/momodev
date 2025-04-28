@@ -81,26 +81,6 @@ struct PersonalPage: View {
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-                        //Current Status Message
-                        Text("Current Status: \(statusMessage)")
-                            .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.85))
-                        //Displaying status message
-                        Group {
-                            if !customMessage.isEmpty {
-                                Text("“\(customMessage)”")
-                                    .font(.body)
-                                    .foregroundColor(.white)
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal, 24)
-                            } else {
-                                Text(" ")
-                                    .font(.body)
-                                    .padding(.horizontal, 24)
-                                    .hidden()
-                            }
-                        }
-                        .frame(height: 24)
                     }
 
                     //Gym Status Button's
@@ -124,7 +104,7 @@ struct PersonalPage: View {
 
                     //Status Message UI and setup
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Status Message")
+                        Text("Current Status Message")
                             .font(.subheadline)
                             .fontWeight(.medium)
                         //Taking in characters for message
@@ -156,6 +136,9 @@ struct PersonalPage: View {
                                         .background(Color.red)
                                         .cornerRadius(6)
                                 }
+                                
+                                Spacer()
+                                
                                 Button(action: {
                                     saveCustomMessage()
                                 }) {
