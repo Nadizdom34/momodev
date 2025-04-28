@@ -42,14 +42,14 @@ struct FriendsListScreen: View {
                                 .foregroundColor(.gray)
                         }
                         //Creating button to notify friend's you're at gym
-                        Button(action: {
-                            sendGymPing(to: friend.id)
-                        }) {
-                            Text("Notify: I'm at the gym")
-                                .font(.caption)
-                                .foregroundColor(.blue)
-                                .padding(.top, 4)
-                        }
+//                        Button(action: {
+//                            sendGymPing(to: friend.id)
+//                        }) {
+//                            Text("Notify: I'm at the gym")
+//                                .font(.caption)
+//                                .foregroundColor(.blue)
+//                                .padding(.top, 4)
+//                        }
                     }
                     .padding(.vertical, 6)
                     .listRowBackground(Color.clear)
@@ -130,14 +130,14 @@ struct FriendsListScreen: View {
         listeners.removeAll()
     }
     //Sends a ping to user's phone to notify a friend they are at the gym
-    func sendGymPing(to friendId: String) {
-        Functions.functions().httpsCallable("sendGymPing").call(["friendId": friendId]) { result, error in
-            if let error = error {
-                print("Failed to send gym ping: \(error.localizedDescription)")
-            } else {
-                print("Sent gym ping to \(friendId)")
-            }
-        }
-    }
+//    func sendGymPing(to friendId: String) {
+//        Functions.functions().httpsCallable("sendGymPing").call(["friendId": friendId]) { result, error in
+//            if let error = error {
+//                print("Failed to send gym ping: \(error.localizedDescription)")
+//            } else {
+//                print("Sent gym ping to \(friendId)")
+//            }
+//        }
+//    }
 }
 
