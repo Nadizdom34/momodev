@@ -2,9 +2,9 @@ import SwiftUI
 import FirebaseFirestore
 import FirebaseFunctions
 
-//Displays the user's friends in a list view
-//Recieves real time updates from Firestore
-//Handles adding friend's to current users friend's list
+// Displays the user's friends in a list view
+// Receives real-time updates from Firestore
+// Handles adding friends to the current user's friend list
 struct FriendsListScreen: View {
     @State private var friendsDict: [String: Friend] = [:]
     @State private var showAddFriend = false
@@ -15,7 +15,7 @@ struct FriendsListScreen: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                //Background UI
+                // Background UI
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color(red: 1.0, green: 0.85, blue: 0.95), // blush pink
@@ -25,7 +25,8 @@ struct FriendsListScreen: View {
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
-                //Friend's List
+
+                // Friend's List
                 List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \.id) { friend in
                     VStack(alignment: .leading, spacing: 6) {
                         HStack {
@@ -35,26 +36,22 @@ struct FriendsListScreen: View {
                             Text(friend.status.rawValue)
                                 .foregroundColor(friend.status.color)
                         }
-                        //Shows status message if available
                         if let message = friend.message, !message.isEmpty {
                             Text("\"\(message)\"")
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                         }
-                        //Creating button to notify friend's you're at gym
-//                        Button(action: {
-//                            sendGymPing(to: friend.id)
-//                        }) {
-//                            Text("Notify: I'm at the gym")
-//                                .font(.caption)
-//                                .foregroundColor(.blue)
-//                                .padding(.top, 4)
-//                        }
                     }
-                    .padding(.vertical, 6)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.white.opacity(0.7), lineWidth: 1.5) // Soft white border
+                            .background(Color.white.opacity(0.15)) // Light inner background
+                            .cornerRadius(12)
+                    )
                     .listRowBackground(Color.clear)
                 }
-                .scrollContentBackground(.hidden) 
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("Friends")
             .toolbar {
@@ -75,7 +72,8 @@ struct FriendsListScreen: View {
             }
         }
     }
-    //Sets up Firestore listeners to keep track of updates to a user's friends list friend's statuses.
+
+    // Sets up Firestore listeners to keep track of updates to a user's friends list and friend's statuses
     func listenToFriends() {
         guard let userId = userId, !userId.isEmpty else { return }
         removeAllListeners()
@@ -88,17 +86,16 @@ struct FriendsListScreen: View {
                 }
 
                 guard let docs = snapshot?.documents else { return }
-                //Iterating through friend's list
+
                 for doc in docs {
                     let friendID = doc.documentID
-                    //Listener to get live updates for a friend's statuses
                     let listener = db.collection("users").document(friendID)
                         .addSnapshotListener { snap, error in
                             if let error = error {
                                 print("Error listening to friend profile: \(error)")
                                 return
                             }
-                            //Getting a friend's live gym status
+
                             guard let data = snap?.data(),
                                   let name = data["name"] as? String,
                                   let statusRaw = data["gymStatus"] as? String,
@@ -118,26 +115,15 @@ struct FriendsListScreen: View {
                                 )
                             }
                         }
-
+                    
                     listeners.append(listener)
                 }
             }
     }
 
-    //Closes the listener accessing updates to a friend's list or status
+    // Removes all listeners to prevent memory leaks
     func removeAllListeners() {
         listeners.forEach { $0.remove() }
         listeners.removeAll()
     }
-    //Sends a ping to user's phone to notify a friend they are at the gym
-//    func sendGymPing(to friendId: String) {
-//        Functions.functions().httpsCallable("sendGymPing").call(["friendId": friendId]) { result, error in
-//            if let error = error {
-//                print("Failed to send gym ping: \(error.localizedDescription)")
-//            } else {
-//                print("Sent gym ping to \(friendId)")
-//            }
-//        }
-//    }
 }
-
