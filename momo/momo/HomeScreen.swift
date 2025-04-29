@@ -65,40 +65,42 @@ struct HomeScreen: View {
                     Text("\(union)")
                         .foregroundStyle(.purple)
                         .font(.custom("", size: 80))
-                    HStack(spacing:15) {
-                        Button(action: {self.stopWatch.start()}) {
+                    
+                    HStack(spacing: 15) {
+                        Button(action: { self.stopWatch.start() }) {
                             Text("Start")
                                 .font(.subheadline)
                                 .padding()
                                 .frame(width: 100)
-                                .background(Color.green.opacity(0.8))
-                                .foregroundColor(.white)
+                                .background(Color(red: 0.7, green: 1.0, blue: 0.7)) // pastel green
+                                .foregroundColor(.black)
                                 .cornerRadius(15)
-                                .shadow(radius:5)
+                                .shadow(radius: 5)
                         }
                         
-                        Button(action: {self.stopWatch.stop()}) {
+                        Button(action: { self.stopWatch.stop() }) {
                             Text("Stop")
                                 .font(.subheadline)
                                 .padding()
                                 .frame(width: 100)
-                                .background(Color.red.opacity(0.8))
-                                .foregroundColor(.white)
+                                .background(Color(red: 1.0, green: 0.7, blue: 0.7)) // pastel red/pink
+                                .foregroundColor(.black)
                                 .cornerRadius(15)
-                                .shadow(radius:5)
+                                .shadow(radius: 5)
                         }
                         
-                        Button(action: {self.stopWatch.reset()}) {
+                        Button(action: { self.stopWatch.reset() }) {
                             Text("Reset")
                                 .font(.subheadline)
                                 .padding()
                                 .frame(width: 100)
-                                .background(Color.yellow.opacity(0.8))
-                                .foregroundColor(.white)
+                                .background(Color(red: 1.0, green: 1.0, blue: 0.7)) // pastel yellow
+                                .foregroundColor(.black)
                                 .cornerRadius(15)
-                                .shadow(radius:5)
+                                .shadow(radius: 5)
                         }
                     }
+
                 }
                 .padding()
                 .background(Color.white.opacity(0.15))
