@@ -15,14 +15,11 @@ struct MainTabView: View {
 
     var body: some View {
         TabView {
-            HomeScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-            
-            FriendsListScreen()
-                .tabItem { Label("Friends", systemImage: "person.2.fill") }
-            //Passes in a user's data to be used on personal page
             PersonalPage(userData: userData)
                 .tabItem { Label("My Page", systemImage: "person.crop.circle") }
+
+            FriendsListScreen()
+                .tabItem { Label("Friends", systemImage: "person.2.fill") }
         }
     }
 }

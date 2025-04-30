@@ -2,6 +2,7 @@ import SwiftUI
 import Firebase
 import FirebaseFirestore
 import FirebaseAuth
+import RiveRuntime
 
 // Personal Page Screen where the user can update gym status, status message, and profile picture
 struct PersonalPage: View {
@@ -31,6 +32,8 @@ struct PersonalPage: View {
     var remainingCharacters: Int {
         max(0, 50 - customMessage.count)
     }
+    
+    let characterAnimation = RiveViewModel(fileName: "character_test")
 
     var body: some View {
         ZStack {
@@ -48,55 +51,9 @@ struct PersonalPage: View {
             ScrollView {
                 VStack(spacing: 20) {
                     // Profile Header
-                    VStack(spacing: 12) {
-                        HStack(spacing: 16) {
-                            Button(action: {
-                                if selectedImageIndex > 0 {
-                                    selectedImageIndex -= 1
-                                } else {
-                                    selectedImageIndex = profileImages.count - 1
-                                }
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .foregroundColor(.white)
-                                    .padding(10)
-                                    .background(Color.black.opacity(0.2))
-                                    .clipShape(Circle())
-                            }
-
-                            Circle()
-                                .fill(Color.white.opacity(0.2))
-                                .frame(width: 160, height: 160)
-                                .overlay(
-                                    Image(profileImages[selectedImageIndex])
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 90, height: 90)
-                                )
-                                .shadow(radius: 8)
-                            //Selecting profile image
-                            Button(action: {
-                                if selectedImageIndex < profileImages.count - 1 {
-                                    selectedImageIndex += 1
-                                } else {
-                                    selectedImageIndex = 0
-                                }
-                            }) {
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.white)
-                                    .padding(10)
-                                    .background(Color.black.opacity(0.2))
-                                    .clipShape(Circle())
-                            }
-                        }
-                        .padding(.top, 4)
-
-                        Text(userName)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                    }
-
+                    characterAnimation.view()
+                        .frame(width: 400, height: 400)
+                        .shadow(radius: 5)
 
                     // Gym Status Buttons
                     VStack(spacing: 12) {

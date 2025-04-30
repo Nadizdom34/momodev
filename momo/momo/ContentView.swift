@@ -28,14 +28,11 @@ struct ContentView: View {
 
         var body: some View {
             TabView {
-                HomeScreen()
-                    .tabItem { Label("Home", systemImage: "house.fill") }
+                PersonalPage(userData: userData)
+                    .tabItem { Label("My Page", systemImage: "person.crop.circle") }
                 
                 FriendsListScreen()
                     .tabItem { Label("Friends", systemImage: "person.2.fill") }
-
-                PersonalPage(userData: userData) 
-                    .tabItem { Label("My Page", systemImage: "person.crop.circle") }
             }
         }
     }
