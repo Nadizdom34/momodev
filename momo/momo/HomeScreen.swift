@@ -53,7 +53,7 @@ struct HomeScreen: View {
                     .frame(width: 400, height: 400)
                     .shadow(radius: 5)
                 //App motivation
-                Text("Track your fitness. Stay motivated. Connect with friends.")
+                Text("Stay motivated. Connect with friends.")
                     .multilineTextAlignment(.center)
                     .foregroundColor(.white)
                     .font(.title3)
@@ -107,7 +107,7 @@ struct HomeScreen: View {
                 .cornerRadius(20)
                 .padding(.horizontal,30)
                 
-                Spacer(minLength:40)
+                Spacer(minLength:70)
             }
         }
     }
