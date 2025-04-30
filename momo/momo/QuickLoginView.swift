@@ -50,7 +50,7 @@ struct QuickLoginView: View {
                         .font(.system(size: 40, weight: .heavy, design: .rounded))
                         .foregroundColor(.white)
                     
-                    Text("Connect with friends for your fitness journey 💪")
+                    Text("Connect with friends for your fitness journey ")
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.8))
                         .multilineTextAlignment(.center)

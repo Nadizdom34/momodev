@@ -15,13 +15,13 @@ struct AddFriendScreen: View {
     @Binding var friends: [Friend]
     @State private var friendPhone = ""
     private let db = Firestore.firestore()
-
+    
     var body: some View {
         NavigationStack {
             Form {
                 TextField("Friend's Phone Number", text: $friendPhone)
                     .keyboardType(.phonePad)
-
+                
                 Button("Add Friend by Phone") {
                     searchFriendByPhone()
                 }
@@ -29,7 +29,20 @@ struct AddFriendScreen: View {
             .navigationTitle("Add Friend")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") { dismiss() }
+                    //                    Button("Cancel") { dismiss() }
+                    Button(action:{
+                        dismiss()
+                    }){
+                        Text("Cancel")
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .padding(.vertical,10)
+                            .padding(.horizontal,16)
+                            .background(Color.purple)
+                            .foregroundColor(Color.white)
+                            .cornerRadius(10)
+                        //                    }
+                    }
                 }
             }
         }

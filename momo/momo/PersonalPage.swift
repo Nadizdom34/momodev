@@ -3,22 +3,25 @@ import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
-// Personal Page Screen
+// Personal Page Screen where the user can update gym status, status message, and profile picture
 struct PersonalPage: View {
     @Environment(\.dismiss) var dismiss
     @State private var statusMessage = "No Gym"
     @State private var customMessage = ""
     @State private var friends: [Friend] = []
+    
     @State private var selectedImageIndex = 0
-    @State private var selectedStatus: GymStatus? = nil 
-
-    let profileImages = ["sleepy cat", "gym cat", "walking cat"]
-    let userData: [String: Any]
-    private let db = Firestore.firestore()
-
+    @State private var selectedStatus: GymStatus? = nil
+    
     @State private var showBubble = false
     @State private var bubbleText = ""
 
+    let profileImages = ["sleepy cat", "gym cat", "walking cat"]
+    //Getting the data for that user from firestore
+    let userData: [String: Any]
+    private let db = Firestore.firestore()
+
+    //User's information:
     var userID: String {
         userData["id"] as? String ?? "unknown"
     }
@@ -31,7 +34,7 @@ struct PersonalPage: View {
 
     var body: some View {
         ZStack {
-            // Background
+            // Background UI
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 0.6, green: 0.4, blue: 0.9),
@@ -71,7 +74,7 @@ struct PersonalPage: View {
                                         .frame(width: 90, height: 90)
                                 )
                                 .shadow(radius: 8)
-
+                            //Selecting profile image
                             Button(action: {
                                 if selectedImageIndex < profileImages.count - 1 {
                                     selectedImageIndex += 1
@@ -144,14 +147,14 @@ struct PersonalPage: View {
                                     customMessage = String(newValue.prefix(50))
                                 }
                             }
-
+                        //Setting up restrictions for message character length
                         HStack {
                             Spacer()
                             Text("\(remainingCharacters) characters left")
                                 .font(.caption2)
                                 .foregroundColor(remainingCharacters <= 5 ? .red : .gray)
                         }
-
+                        //Delete Status Message
                         ZStack {
                             HStack(spacing: 8) {
                                 Button(action: {
@@ -167,7 +170,7 @@ struct PersonalPage: View {
                                 }
 
                                 Spacer()
-
+                                //Updating custom status message
                                 Button(action: {
                                     saveCustomMessage()
                                 }) {
@@ -217,7 +220,7 @@ struct PersonalPage: View {
         }
     }
 
-    // --- Functions ---
+    //Used for leaderboard to see if user has checked into the gym
     func recordCheckIn() {
         let checkInData: [String: Any] = ["timestamp": Timestamp(date: Date())]
         db.collection("checkins")
@@ -231,7 +234,7 @@ struct PersonalPage: View {
                 }
             }
     }
-
+    //UI for the "sent" bubble when user's custom status message is updated
     func showFloatingBubble(with text: String) {
         bubbleText = text
         withAnimation {
@@ -243,7 +246,7 @@ struct PersonalPage: View {
             }
         }
     }
-
+    //Updates the users gym status and status message to firestore
     func updateStatus(status: GymStatus) {
         db.collection("users").document(userID).setData([
             "gymStatus": status.rawValue,
@@ -262,7 +265,7 @@ struct PersonalPage: View {
             }
         }
     }
-
+    //Updates and saves the user's custom message in firestore
     func saveCustomMessage() {
         db.collection("users").document(userID).setData([
             "statusMessage": customMessage
@@ -275,7 +278,7 @@ struct PersonalPage: View {
             }
         }
     }
-
+    //Deletes a user's status message and updates firestore
     func deleteStatusMessage() {
         customMessage = ""
         db.collection("users").document(userID).updateData([
@@ -284,12 +287,12 @@ struct PersonalPage: View {
             if let error = error {
                 print("Error deleting status message: \(error.localizedDescription)")
             } else {
-                showFloatingBubble(with: "Deleted 🗑️")
+                showFloatingBubble(with: "Deleted")
                 print("Successfully deleted status message")
             }
         }
     }
-
+    //Gets the user's updated status information from the firestore
     func fetchUserStatus() {
         db.collection("users").document(userID).getDocument { snapshot, error in
             if let error = error {
@@ -313,7 +316,7 @@ struct PersonalPage: View {
             }
         }
     }
-
+    //Handles log-out for a user when button is pressed.
     func logOut() {
         UserDefaults.standard.set(false, forKey: "isLoggedIn")
         do {

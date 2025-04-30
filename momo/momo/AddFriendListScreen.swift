@@ -31,24 +31,41 @@ struct AddFriendListScreen: View {
                     Section(header: Text("Enter Friend Code")) {
                         TextField("6-character code", text: $inputCode)
                             .autocapitalization(.allCharacters)
-
-                        Button("Add Friend by Code") {
+                        
+                        Button(action: {
                             addFriendByCode()
+                        }) {
+                            Text("Add Friend by Code")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color.purple)
                         }
                     }
-
+                        
                     Section(header: Text("Your Invite Code")) {
                         if let userId = userId {
-                            Button("Generate New Code") {
+                            Button(action: {
                                 generateFriendCode(for: userId)
+                            }) {
+                                Text("Generate New Code")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color.purple) // pastel purple
                             }
-
-                            if let code = currentCode {
-                                Text("Code: \(code)")
-                                    .font(.headline)
+                        if let code = currentCode {
+                            Text("Code: \(code)")
+                            .font(.headline)
+                            //Lets a user copy the generated code 
+                            .contextMenu {
+                                Button(action: {
+                                    UIPasteboard.general.string = code
+                                }) {
+                                    Label("Copy", systemImage: "doc.on.doc")
+                                }
+                            }
+                                }
                             }
                         }
-                    }
                     //Error message
                     if let errorMessage {
                         Text(errorMessage)
@@ -61,8 +78,17 @@ struct AddFriendListScreen: View {
             .navigationTitle("Add Friend")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
+                    Button(action:{
                         dismiss()
+                    }){
+                        Text("Cancel")
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .padding(.vertical,10)
+                            .padding(.horizontal,16)
+                            .background(Color.purple)
+                            .foregroundColor(Color.white)
+                            .cornerRadius(10)
                     }
                 }
             }

@@ -56,8 +56,17 @@ struct FriendsListScreen: View {
             .navigationTitle("Friends")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Add") {
-                        showAddFriend = true
+                    Button(action:{
+                    showAddFriend = true
+                    }){
+                        Text("Add a Friend")
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .padding(.vertical,10)
+                            .padding(.horizontal,16)
+                            .background(Color.purple)
+                            .foregroundColor(Color.white)
+                            .cornerRadius(10)
                     }
                 }
             }
