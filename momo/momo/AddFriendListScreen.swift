@@ -31,10 +31,7 @@ struct AddFriendListScreen: View {
                     Section(header: Text("Enter Friend Code")) {
                         TextField("6-character code", text: $inputCode)
                             .autocapitalization(.allCharacters)
-                        
-                        Button(action: {
-                            addFriendByCode()
-                        }) {
+                        Button(action: addFriendByCode) {
                             Text("Add Friend by Code")
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
@@ -50,7 +47,7 @@ struct AddFriendListScreen: View {
                                 Text("Generate New Code")
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(Color.purple) // pastel purple
+                                    .foregroundColor(Color.purple)
                             }
                         if let code = currentCode {
                             Text("Code: \(code)")
@@ -125,6 +122,9 @@ struct AddFriendListScreen: View {
         }
 
         let code = inputCode.uppercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        if code.isEmpty {
+            return
+        }
 
         db.collection("friendCodes").document(code).getDocument { snapshot, error in
             if let error = error {

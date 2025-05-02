@@ -48,7 +48,7 @@ struct PersonalPage: View {
             )
             .ignoresSafeArea()
 
-            ScrollView {
+//            ScrollView {
                 VStack(spacing: 20) {
                     // Profile Header
                     characterAnimation.view()
@@ -171,7 +171,7 @@ struct PersonalPage: View {
                 }
                 .padding()
             }
-        }
+//        }
         .onAppear {
             fetchUserStatus()
         }
