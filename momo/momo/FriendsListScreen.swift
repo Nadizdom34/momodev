@@ -86,6 +86,10 @@ struct FriendsListScreen: View {
     func listenToFriends() {
         guard let userId = userId, !userId.isEmpty else { return }
         removeAllListeners()
+        
+        DispatchQueue.main.async {
+                friendsDict = [:]
+            }
 
         db.collection("users").document(userId).collection("friends")
             .addSnapshotListener { snapshot, error in
