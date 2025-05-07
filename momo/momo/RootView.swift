@@ -5,16 +5,18 @@ import FirebaseAuth
 //The root navigation logic for the app, handles whether to show the main app, loading screen, or login view.
 struct RootView: View {
     //User data that is fetched from Firestore
-    @State private var userData: [String: Any]?
+    @State private var userData: [String: Any] = [:]
 
     var body: some View {
         ZStack {
-            if let userData {
-                //Indicates user is logged in, loads their data, and displays main tabs of app
-                MainTabView(userData: userData)
-            } else {
+            if userData.isEmpty {
                 //Indicates user is loggen in, but still fetching data
                 LoadingView()
+            } else if userData["name"] == nil {
+                QuickLoginView(userData: $userData)
+            } else {
+                //Indicates user is logged in, loads their data, and displays main tabs of app
+                MainTabView(userData: userData)
             }
         }
         .task {

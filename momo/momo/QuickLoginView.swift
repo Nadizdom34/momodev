@@ -6,14 +6,15 @@ struct QuickLoginView: View {
     @State private var userName = ""
     @State private var error: String?
     
-    var isLoggedIn: Bool {
-        userId != nil
-    }
+    @Binding var userData: [String: Any]
+//    var isLoggedIn: Bool {
+//        userId != nil
+//    }
     
-    @AppStorage("userId") private var userId: String?
-    @AppStorage("userName") private var storedUserName: String = ""
+//    @AppStorage("userId") private var userId: String?
+//    @AppStorage("userName") private var storedUserName: String = ""
     
-    var onLoginSuccess: (_ userData: [String: Any]) -> Void
+//    var onLoginSuccess: (_ userData: [String: Any]) -> Void
     
     var body: some View {
         ZStack {
@@ -100,51 +101,28 @@ struct QuickLoginView: View {
         }
         
         let db = Firestore.firestore()
-        let usersRef = db.collection("users")
         
-        usersRef.whereField("name", isEqualTo: userName).getDocuments { snapshot, err in
-            if let err = err {
-                self.error = "Error checking existing users: \(err.localizedDescription)"
-                return
-            }
-            
-            if let doc = snapshot?.documents.first {
-                // Existing user
-                userId = doc.documentID
-                storedUserName = userName
-                
-                var existingData = doc.data()
-                existingData["id"] = userId
-                onLoginSuccess(existingData)
+        guard let userId = userData["id"] as? String else {
+            error = "No user ID"
+            return
+        }
+        
+        let newData: [_: Any] = [
+            "name": userName,
+            "joined": Timestamp(),
+            "gymStatus": GymStatus.notInGym.rawValue,
+            "statusMessage": ""
+        ]
+        db.collection("users").document(userId).setData(newData, merge: true) { error in
+            if let error = error {
+                print("Error updating status: \(error)")
             } else {
-                // Create new user
-                let newUserRef = usersRef.document()
-                let userData: [String: Any] = [
-                    "name": userName,
-                    "joined": Timestamp(),
-                    "gymStatus": GymStatus.notInGym.rawValue,
-                    "statusMessage": ""
-                ]
-                
-                newUserRef.setData(userData) { err in
-                    if let err = err {
-                        self.error = "Failed to create user: \(err.localizedDescription)"
-                    } else {
-                        userId = newUserRef.documentID
-                        storedUserName = userName
-                        
-                        var finalData = userData
-                        finalData["id"] = userId
-                        onLoginSuccess(finalData)
-                    }
+                DispatchQueue.main.async {
+                    userData.merge(newData) { $1 }
                 }
             }
         }
     }
-}
-
-#Preview {
-    QuickLoginView { _ in }
 }
 
 
