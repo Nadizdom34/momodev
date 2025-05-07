@@ -26,9 +26,6 @@ struct PersonalPage: View {
     var userID: String {
         userData["id"] as? String ?? "unknown"
     }
-    var userName: String {
-        userData["name"] as? String ?? "User"
-    }
     var remainingCharacters: Int {
         max(0, 50 - customMessage.count)
     }
