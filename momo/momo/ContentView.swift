@@ -22,7 +22,7 @@ struct ContentView: View {
                 PersonalPage(userData: userData)
                     .tabItem { Label("My Page", systemImage: "person.crop.circle") }
                 
-                FriendsListScreen()
+                FriendsListScreen(userId: userData["id"] as? String)
                     .tabItem { Label("Friends", systemImage: "person.2.fill") }
             }
         }

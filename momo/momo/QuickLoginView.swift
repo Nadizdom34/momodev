@@ -7,14 +7,7 @@ struct QuickLoginView: View {
     @State private var error: String?
     
     @Binding var userData: [String: Any]
-//    var isLoggedIn: Bool {
-//        userId != nil
-//    }
-    
-//    @AppStorage("userId") private var userId: String?
-//    @AppStorage("userName") private var storedUserName: String = ""
-    
-//    var onLoginSuccess: (_ userData: [String: Any]) -> Void
+
     
     var body: some View {
         ZStack {

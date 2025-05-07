@@ -7,7 +7,7 @@ struct AddFriendListScreen: View {
     @Environment(\.dismiss) var dismiss
     @State private var inputCode = "" //User input for friend's invite code
     @State private var errorMessage: String?
-    @AppStorage("userId") private var userId: String?
+    var userId: String?
     @State private var currentCode: String? //User's current generated invite code
 
     private let db = Firestore.firestore()

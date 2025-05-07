@@ -10,7 +10,7 @@ struct FriendsListScreen: View {
     @State private var showAddFriend = false
     private let db = Firestore.firestore()
     @State private var listeners: [ListenerRegistration] = []
-    @AppStorage("userId") private var userId: String?
+    var userId: String?
 
     var body: some View {
         NavigationStack {
@@ -71,7 +71,7 @@ struct FriendsListScreen: View {
                 }
             }
             .sheet(isPresented: $showAddFriend) {
-                AddFriendListScreen()
+                AddFriendListScreen(userId: userId)
             }
             .onAppear {
                 listenToFriends()
@@ -124,7 +124,6 @@ struct FriendsListScreen: View {
                                 )
                             }
                         }
-                    
                     listeners.append(listener)
                 }
             }
