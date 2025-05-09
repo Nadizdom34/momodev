@@ -30,7 +30,7 @@ struct PersonalPage: View {
         max(0, 50 - customMessage.count)
     }
     
-    let characterAnimation = RiveViewModel(fileName: "character_test")
+    let characterAnimation = RiveViewModel(fileName: "momo_done")
 
     var body: some View {
         ZStack {
@@ -53,106 +53,112 @@ struct PersonalPage: View {
                         .shadow(radius: 5)
 
                     // Gym Status Buttons
-                    VStack(spacing: 12) {
-                        Text("Your Gym Status")
-                            .font(.headline)
-                            .foregroundColor(.white)
-
-                        HStack(spacing: 10) {
-                            StatusButton(
-                                title: "No Gym",
-                                isSelected: selectedStatus == .notInGym,
-                                color: Color(red: 1.0, green: 0.6, blue: 0.6)
-                            ) {
-                                updateStatus(status: .notInGym)
-                                selectedStatus = .notInGym
-                            }
-
-                            StatusButton(
-                                title: "Going",
-                                isSelected: selectedStatus == .goingToGym,
-                                color: Color(red: 1.0, green: 0.8, blue: 0.6)
-                            ) {
-                                updateStatus(status: .goingToGym)
-                                selectedStatus = .goingToGym
-                            }
-
-                            StatusButton(
-                                title: "At Gym",
-                                isSelected: selectedStatus == .inGym,
-                                color: Color(red: 0.7, green: 1.0, blue: 0.7)
-                            ) {
-                                updateStatus(status: .inGym)
-                                selectedStatus = .inGym
+                    HStack{
+                        VStack(spacing: 12) {
+                            Text("Your Gym Status")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            
+                            HStack(spacing: 10) {
+                                StatusButton(
+                                    title: "No Gym",
+                                    isSelected: selectedStatus == .notInGym,
+                                    color: Color(red: 1.0, green: 0.6, blue: 0.6)
+                                ) {
+                                    updateStatus(status: .notInGym)
+                                    selectedStatus = .notInGym
+                                }
+                                
+                                StatusButton(
+                                    title: "Going",
+                                    isSelected: selectedStatus == .goingToGym,
+                                    color: Color(red: 1.0, green: 0.8, blue: 0.6)
+                                ) {
+                                    updateStatus(status: .goingToGym)
+                                    selectedStatus = .goingToGym
+                                }
+                                
+                                StatusButton(
+                                    title: "At Gym",
+                                    isSelected: selectedStatus == .inGym,
+                                    color: Color(red: 0.7, green: 1.0, blue: 0.7)
+                                ) {
+                                    updateStatus(status: .inGym)
+                                    selectedStatus = .inGym
+                                }
                             }
                         }
+                        .padding(.horizontal, 16)
                     }
 
                     // Status Message Section
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Your Status Message")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-
-                        TextField("What's your status message?", text: $customMessage)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .onChange(of: customMessage) { newValue in
-                                if newValue.count > 50 {
-                                    customMessage = String(newValue.prefix(50))
+                    HStack{
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Your Status Message")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            
+                            TextField("What's your status message?", text: $customMessage)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .onChange(of: customMessage) { newValue in
+                                    if newValue.count > 50 {
+                                        customMessage = String(newValue.prefix(50))
+                                    }
                                 }
-                            }
-                        //Setting up restrictions for message character length
-                        HStack {
-                            Spacer()
-                            Text("\(remainingCharacters) characters left")
-                                .font(.caption2)
-                                .foregroundColor(remainingCharacters <= 5 ? .red : .gray)
-                        }
-                        //Delete Status Message
-                        ZStack {
-                            HStack(spacing: 8) {
-                                Button(action: {
-                                    deleteStatusMessage()
-                                }) {
-                                    Text("Clear")
-                                        .font(.caption)
-                                        .foregroundColor(.black)
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 6)
-                                        .background(Color(red: 1.0, green: 0.7, blue: 0.8)) // pastel pink
-                                        .cornerRadius(6)
-                                }
-
+                            //Setting up restrictions for message character length
+                            HStack {
                                 Spacer()
-                                //Updating custom status message
-                                Button(action: {
-                                    saveCustomMessage()
-                                }) {
-                                    Text("Update")
-                                        .font(.caption)
-                                        .foregroundColor(.black)
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 6)
-                                        .background(Color(red: 0.8, green: 0.7, blue: 1.0)) // pastel lavender
-                                        .cornerRadius(6)
+                                Text("\(remainingCharacters) characters left")
+                                    .font(.caption2)
+                                    .foregroundColor(remainingCharacters <= 5 ? .red : .gray)
+                            }
+                            //Delete Status Message
+                            ZStack {
+                                HStack(spacing: 8) {
+                                    Button(action: {
+                                        deleteStatusMessage()
+                                    }) {
+                                        Text("Clear")
+                                            .font(.caption)
+                                            .foregroundColor(.black)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 6)
+                                            .background(Color(red: 1.0, green: 0.7, blue: 0.8)) // pastel pink
+                                            .cornerRadius(6)
+                                    }
+                                    
+                                    Spacer()
+                                    //Updating custom status message
+                                    Button(action: {
+                                        saveCustomMessage()
+                                    }) {
+                                        Text("Update")
+                                            .font(.caption)
+                                            .foregroundColor(.black)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 6)
+                                            .background(Color(red: 0.8, green: 0.7, blue: 1.0)) // pastel lavender
+                                            .cornerRadius(6)
+                                    }
+                                }
+                                
+                                if showBubble {
+                                    Text(bubbleText)
+                                        .font(.caption2)
+                                        .padding(6)
+                                        .background(Color.black.opacity(0.85))
+                                        .foregroundColor(.white)
+                                        .cornerRadius(8)
+                                        .transition(.opacity.combined(with: .scale))
+                                        .offset(y: -5)
                                 }
                             }
-
-                            if showBubble {
-                                Text(bubbleText)
-                                    .font(.caption2)
-                                    .padding(6)
-                                    .background(Color.black.opacity(0.85))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
-                                    .transition(.opacity.combined(with: .scale))
-                                    .offset(y: -5)
-                            }
                         }
+                        .padding(10)
+                        .background(Color.white.opacity(0.9))
+                        .cornerRadius(10)
                     }
-                    .padding(10)
-                    .background(Color.white.opacity(0.9))
-                    .cornerRadius(10)
+                    .padding(.horizontal, 16)
 
                     // Logout Button
                     Button(action: {
