@@ -16,6 +16,8 @@ struct PersonalPage: View {
     
     @State private var showBubble = false
     @State private var bubbleText = ""
+    @State private var keyboardHeight: CGFloat = 0 // 👈 Added to your view
+
 
     let profileImages = ["sleepy cat", "gym cat", "walking cat"]
     //Getting the data for that user from firestore
@@ -160,25 +162,42 @@ struct PersonalPage: View {
                     }
                     .padding(.horizontal, 16)
 
-                    // Logout Button
-                    Button(action: {
-                        logOut()
-                    }) {
-                        Text("Log Out")
-                            .font(.footnote)
-                            .foregroundColor(.red)
-                            .padding(.top, 4)
-                    }
+//                    // Logout Button
+//                    Button(action: {
+//                        logOut()
+//                    }) {
+//                        Text("Log Out")
+//                            .font(.footnote)
+//                            .foregroundColor(.red)
+//                            .padding(.top, 4)
+//                    }
 
                     Spacer()
-                }
-                .padding()
-            }
-//        }
-        .onAppear {
-            fetchUserStatus()
-        }
-    }
+                          }
+                          .padding()
+                          .padding(.bottom, keyboardHeight) // 👈 This moves the layout when keyboard appears
+                          .animation(.easeOut(duration: 0.25), value: keyboardHeight) // 👈 Smooth transition
+                          .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
+                              if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                                  keyboardHeight = keyboardFrame.height
+                              }
+                          }
+                          .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+                              keyboardHeight = 0
+                          }
+                          .gesture(
+                            TapGesture().onEnded { _ in
+                                dismissKeyboard()
+                            }
+                        )
+                      }
+                      .onAppear {
+                          fetchUserStatus()
+                      }
+                  }
+                func dismissKeyboard() {
+                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                        }
 
     //Used for leaderboard to see if user has checked into the gym
     func recordCheckIn() {
@@ -276,6 +295,7 @@ struct PersonalPage: View {
             }
         }
     }
+
     //Handles log-out for a user when button is pressed.
     func logOut() {
         UserDefaults.standard.set(false, forKey: "isLoggedIn")
