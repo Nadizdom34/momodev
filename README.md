@@ -48,4 +48,4 @@ All user data – including gym status, messages, and friend connections – is 
 - Firebase Integration: Uses Auth, Firestore, and Cloud Functions
 
 #### Contributers
-By William Acosta-Lora ([@williamacostalora](https://github.com/williamacostalora), Nadezhda Dominguez Salinas ([@Nadizdom34](https://github.com/Nadizdom34)), Karla Martinez ([@karlamartinez03](https://github.com/karlamartinez03)), and Yeshe Jangchup ([@yeshedj](https://github.com/yeshdj))
+By William Acosta-Lora ([@williamacostalora](https://github.com/williamacostalora), Nadezhda Dominguez Salinas ([@Nadizdom34](https://github.com/Nadizdom34)), Karla Martinez ([@karlamartinez03](https://github.com/karlamartinez03)), and Yeshe Jangchup ([@yeshedj](https://github.com/yeshedj))
