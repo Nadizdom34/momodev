@@ -37,6 +37,7 @@ All user data – including gym status, messages, and friend connections – is 
 
 4. Connect with Friends
 - Tap "Add a Friend" to enter a unique friend code and build your fitness network
+- Make sure both users exchange their codes in order for theme to access each other's statuses!
 
 ### Features
 - Gym Status: Choose between No Gym, Going, or At Gym
