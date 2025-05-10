@@ -4,39 +4,36 @@ import FirebaseFirestore
 import FirebaseAuth
 import RiveRuntime
 
-// Personal Page Screen where the user can update gym status, status message, and profile picture
 struct PersonalPage: View {
     @Environment(\.dismiss) var dismiss
     @State private var statusMessage = "No Gym"
     @State private var customMessage = ""
     @State private var friends: [Friend] = []
-    
+
     @State private var selectedImageIndex = 0
     @State private var selectedStatus: GymStatus? = nil
-    
     @State private var showBubble = false
     @State private var bubbleText = ""
-    @State private var keyboardHeight: CGFloat = 0 // 👈 Added to your view
-
+    @State private var keyboardHeight: CGFloat = 0
 
     let profileImages = ["sleepy cat", "gym cat", "walking cat"]
-    //Getting the data for that user from firestore
     let userData: [String: Any]
     private let db = Firestore.firestore()
 
-    //User's information:
     var userID: String {
         userData["id"] as? String ?? "unknown"
+    }
+    var userName: String {
+        userData["name"] as? String ?? "User"
     }
     var remainingCharacters: Int {
         max(0, 50 - customMessage.count)
     }
-    
+
     let characterAnimation = RiveViewModel(fileName: "momo_done")
 
     var body: some View {
         ZStack {
-            // Background UI
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 0.6, green: 0.4, blue: 0.9),
@@ -47,159 +44,155 @@ struct PersonalPage: View {
             )
             .ignoresSafeArea()
 
-//            ScrollView {
-                VStack(spacing: 20) {
-                    // Profile Header
-                    characterAnimation.view()
-                        .frame(width: 400, height: 400)
-                        .shadow(radius: 5)
+            VStack(spacing: 10) {
+                Text("Hi, \(userName)!")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.top, 40)
 
-                    // Gym Status Buttons
-                    HStack{
-                        VStack(spacing: 12) {
-                            Text("Your Gym Status")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                            
-                            HStack(spacing: 10) {
-                                StatusButton(
-                                    title: "No Gym",
-                                    isSelected: selectedStatus == .notInGym,
-                                    color: Color(red: 1.0, green: 0.6, blue: 0.6)
-                                ) {
-                                    updateStatus(status: .notInGym)
-                                    selectedStatus = .notInGym
-                                }
-                                
-                                StatusButton(
-                                    title: "Going",
-                                    isSelected: selectedStatus == .goingToGym,
-                                    color: Color(red: 1.0, green: 0.8, blue: 0.6)
-                                ) {
-                                    updateStatus(status: .goingToGym)
-                                    selectedStatus = .goingToGym
-                                }
-                                
-                                StatusButton(
-                                    title: "At Gym",
-                                    isSelected: selectedStatus == .inGym,
-                                    color: Color(red: 0.7, green: 1.0, blue: 0.7)
-                                ) {
-                                    updateStatus(status: .inGym)
-                                    selectedStatus = .inGym
-                                }
+                characterAnimation.view()
+                    .frame(width: 400, height: 400)
+                    .shadow(radius: 5)
+                    .offset(y: -50)
+
+                HStack {
+                    VStack(spacing: 12) {
+                        Text("Your Gym Status")
+                            .font(.headline)
+                            .foregroundColor(.white)
+
+                        HStack(spacing: 10) {
+                            StatusButton(
+                                title: "No Gym",
+                                isSelected: selectedStatus == .notInGym,
+                                color: Color(red: 1.0, green: 0.6, blue: 0.6)
+                            ) {
+                                updateStatus(status: .notInGym)
+                                selectedStatus = .notInGym
+                            }
+
+                            StatusButton(
+                                title: "Going",
+                                isSelected: selectedStatus == .goingToGym,
+                                color: Color(red: 1.0, green: 0.8, blue: 0.6)
+                            ) {
+                                updateStatus(status: .goingToGym)
+                                selectedStatus = .goingToGym
+                            }
+
+                            StatusButton(
+                                title: "At Gym",
+                                isSelected: selectedStatus == .inGym,
+                                color: Color(red: 0.7, green: 1.0, blue: 0.7)
+                            ) {
+                                updateStatus(status: .inGym)
+                                selectedStatus = .inGym
                             }
                         }
-                        .padding(.horizontal, 16)
-                    }
-
-                    // Status Message Section
-                    HStack{
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Your Status Message")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            
-                            TextField("What's your status message?", text: $customMessage)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .onChange(of: customMessage) { newValue in
-                                    if newValue.count > 50 {
-                                        customMessage = String(newValue.prefix(50))
-                                    }
-                                }
-                            //Setting up restrictions for message character length
-                            HStack {
-                                Spacer()
-                                Text("\(remainingCharacters) characters left")
-                                    .font(.caption2)
-                                    .foregroundColor(remainingCharacters <= 5 ? .red : .gray)
-                            }
-                            //Delete Status Message
-                            ZStack {
-                                HStack(spacing: 8) {
-                                    Button(action: {
-                                        deleteStatusMessage()
-                                    }) {
-                                        Text("Clear")
-                                            .font(.caption)
-                                            .foregroundColor(.black)
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 6)
-                                            .background(Color(red: 1.0, green: 0.7, blue: 0.8)) // pastel pink
-                                            .cornerRadius(6)
-                                    }
-                                    
-                                    Spacer()
-                                    //Updating custom status message
-                                    Button(action: {
-                                        saveCustomMessage()
-                                    }) {
-                                        Text("Update")
-                                            .font(.caption)
-                                            .foregroundColor(.black)
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 6)
-                                            .background(Color(red: 0.8, green: 0.7, blue: 1.0)) // pastel lavender
-                                            .cornerRadius(6)
-                                    }
-                                }
-                                
-                                if showBubble {
-                                    Text(bubbleText)
-                                        .font(.caption2)
-                                        .padding(6)
-                                        .background(Color.black.opacity(0.85))
-                                        .foregroundColor(.white)
-                                        .cornerRadius(8)
-                                        .transition(.opacity.combined(with: .scale))
-                                        .offset(y: -5)
-                                }
-                            }
-                        }
-                        .padding(10)
-                        .background(Color.white.opacity(0.9))
-                        .cornerRadius(10)
                     }
                     .padding(.horizontal, 16)
+                }
+                .offset(y: -20)
 
-//                    // Logout Button
-//                    Button(action: {
-//                        logOut()
-//                    }) {
-//                        Text("Log Out")
-//                            .font(.footnote)
-//                            .foregroundColor(.red)
-//                            .padding(.top, 4)
-//                    }
+                HStack {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Your Status Message")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
 
-                    Spacer()
-                          }
-                          .padding()
-                          .padding(.bottom, keyboardHeight > 0 ? keyboardHeight * 0.6 : 0) // 👈 This moves the layout when keyboard appears
-                          .animation(.easeOut(duration: 0.25), value: keyboardHeight) // 👈 Smooth transition
-                          .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
-                              if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-                                  keyboardHeight = keyboardFrame.height
-                              }
-                          }
-                          .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-                              keyboardHeight = 0
-                          }
-                          .gesture(
-                            TapGesture().onEnded { _ in
-                                dismissKeyboard()
+                        TextField("What's your status message?", text: $customMessage)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .onChange(of: customMessage) { newValue in
+                                if newValue.count > 50 {
+                                    customMessage = String(newValue.prefix(50))
+                                }
                             }
-                        )
-                      }
-                      .onAppear {
-                          fetchUserStatus()
-                      }
-                  }
-                func dismissKeyboard() {
-                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+
+                        HStack {
+                            Spacer()
+                            Text("\(remainingCharacters) characters left")
+                                .font(.caption2)
+                                .foregroundColor(remainingCharacters <= 5 ? .red : .gray)
                         }
 
-    //Used for leaderboard to see if user has checked into the gym
+                        ZStack {
+                            HStack(spacing: 8) {
+                                Button(action: {
+                                    deleteStatusMessage()
+                                }) {
+                                    Text("Clear")
+                                        .font(.caption)
+                                        .foregroundColor(.black)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 6)
+                                        .background(Color(red: 1.0, green: 0.7, blue: 0.8))
+                                        .cornerRadius(6)
+                                }
+
+                                Spacer()
+
+                                Button(action: {
+                                    saveCustomMessage()
+                                }) {
+                                    Text("Update")
+                                        .font(.caption)
+                                        .foregroundColor(.black)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 6)
+                                        .background(Color(red: 0.8, green: 0.7, blue: 1.0))
+                                        .cornerRadius(6)
+                                }
+                            }
+
+                            if showBubble {
+                                Text(bubbleText)
+                                    .font(.caption2)
+                                    .padding(6)
+                                    .background(Color.black.opacity(0.85))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                                    .transition(.opacity.combined(with: .scale))
+                                    .offset(y: -5)
+                            }
+                        }
+                    }
+                    .padding(10)
+                    .background(Color.white.opacity(0.9))
+                    .cornerRadius(10)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 20)
+                .offset(y: -30)   
+
+                Spacer()
+            }
+            .padding(.horizontal)
+            .padding(.bottom, keyboardHeight > 0 ? keyboardHeight * 0.6 : 0)
+            .animation(.easeOut(duration: 0.25), value: keyboardHeight)
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
+                if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                    keyboardHeight = keyboardFrame.height
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+                keyboardHeight = 0
+            }
+            .gesture(
+                TapGesture().onEnded {
+                    dismissKeyboard()
+                }
+            )
+        }
+        .onAppear {
+            fetchUserStatus()
+        }
+    }
+
+    func dismissKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+
     func recordCheckIn() {
         let checkInData: [String: Any] = ["timestamp": Timestamp(date: Date())]
         db.collection("checkins")
@@ -213,7 +206,7 @@ struct PersonalPage: View {
                 }
             }
     }
-    //UI for the "sent" bubble when user's custom status message is updated
+
     func showFloatingBubble(with text: String) {
         bubbleText = text
         withAnimation {
@@ -225,7 +218,7 @@ struct PersonalPage: View {
             }
         }
     }
-    //Updates the users gym status and status message to firestore
+
     func updateStatus(status: GymStatus) {
         db.collection("users").document(userID).setData([
             "gymStatus": status.rawValue,
@@ -244,7 +237,7 @@ struct PersonalPage: View {
             }
         }
     }
-    //Updates and saves the user's custom message in firestore
+
     func saveCustomMessage() {
         db.collection("users").document(userID).setData([
             "statusMessage": customMessage
@@ -253,11 +246,12 @@ struct PersonalPage: View {
                 print("Error updating custom message: \(error)")
             } else {
                 showFloatingBubble(with: "Sent")
+                dismissKeyboard()
                 print("Custom message updated: \(customMessage)")
             }
         }
     }
-    //Deletes a user's status message and updates firestore
+
     func deleteStatusMessage() {
         customMessage = ""
         db.collection("users").document(userID).updateData([
@@ -271,7 +265,7 @@ struct PersonalPage: View {
             }
         }
     }
-    //Gets the user's updated status information from the firestore
+
     func fetchUserStatus() {
         db.collection("users").document(userID).getDocument { snapshot, error in
             if let error = error {
@@ -296,7 +290,6 @@ struct PersonalPage: View {
         }
     }
 
-    //Handles log-out for a user when button is pressed.
     func logOut() {
         UserDefaults.standard.set(false, forKey: "isLoggedIn")
         do {

@@ -18,52 +18,70 @@ struct FriendsListScreen: View {
                 // Background UI
                 LinearGradient(
                     gradient: Gradient(colors: [
-                        Color(red: 1.0, green: 0.85, blue: 0.95), // blush pink
-                        Color(red: 1.0, green: 0.7, blue: 0.85)   // soft rose
+                        Color(red: 1.0, green: 0.85, blue: 0.95),
+                        Color(red: 1.0, green: 0.7, blue: 0.85)
                     ]),
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
 
-                // Friend's List
-                List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \.id) { friend in
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack {
-                            Text(friend.name)
-                                .font(.headline)
-                            Spacer()
-                            Text(friend.status.rawValue)
-                                .foregroundColor(friend.status.color)
-                        }
-                        if let message = friend.message, !message.isEmpty {
-                            Text("\"\(message)\"")
+                // Friend list and empty state message
+                ZStack {
+                    if friendsDict.isEmpty {
+                        VStack {
+                            Text("No friends yet!")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black)
+                                .padding(.bottom, 8)
+
+                            Text("Add some friends to see their gym updates.")
                                 .font(.subheadline)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.black.opacity(0.85))
+                                .multilineTextAlignment(.center)
                         }
+                        .padding()
                     }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.white.opacity(0.7), lineWidth: 1.5) // Soft white border
-                            .background(Color.white.opacity(0.15)) // Light inner background
-                            .cornerRadius(12)
-                    )
-                    .listRowBackground(Color.clear)
+
+                    List(Array(friendsDict.values).sorted(by: { $0.name < $1.name }), id: \.id) { friend in
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Text(friend.name)
+                                    .font(.headline)
+                                Spacer()
+                                Text(friend.status.rawValue)
+                                    .foregroundColor(friend.status.color)
+                            }
+                            if let message = friend.message, !message.isEmpty {
+                                Text("\"\(message)\"")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.white.opacity(0.7), lineWidth: 1.5)
+                                .background(Color.white.opacity(0.15))
+                                .cornerRadius(12)
+                        )
+                        .listRowBackground(Color.clear)
+                    }
+                    .scrollContentBackground(.hidden)
                 }
-                .scrollContentBackground(.hidden)
             }
             .navigationTitle("Friends")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action:{
-                    showAddFriend = true
-                    }){
-                        Text("Add a Friend")
+                    Button(action: {
+                        showAddFriend = true
+                    }) {
+                        Text("Add Friend")
                             .font(.subheadline)
                             .fontWeight(.bold)
-                            .padding(.vertical,10)
-                            .padding(.horizontal,16)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 16)
                             .background(Color.purple)
                             .foregroundColor(Color.white)
                             .cornerRadius(10)
@@ -86,10 +104,10 @@ struct FriendsListScreen: View {
     func listenToFriends() {
         guard let userId = userId, !userId.isEmpty else { return }
         removeAllListeners()
-        
+
         DispatchQueue.main.async {
-                friendsDict = [:]
-            }
+            friendsDict = [:]
+        }
 
         db.collection("users").document(userId).collection("friends")
             .addSnapshotListener { snapshot, error in
