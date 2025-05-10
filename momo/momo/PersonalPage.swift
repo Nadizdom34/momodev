@@ -175,7 +175,7 @@ struct PersonalPage: View {
                     Spacer()
                           }
                           .padding()
-                          .padding(.bottom, keyboardHeight) // 👈 This moves the layout when keyboard appears
+                          .padding(.bottom, keyboardHeight > 0 ? keyboardHeight * 0.6 : 0) // 👈 This moves the layout when keyboard appears
                           .animation(.easeOut(duration: 0.25), value: keyboardHeight) // 👈 Smooth transition
                           .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
                               if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
