@@ -1,32 +1,28 @@
 import SwiftUI
 import FirebaseFirestore
 
-// Allows users to enter an invite code to add them
-// Generate a user's own unique code to invite others
+/// Allows users to enter an invite code to add them and generate a user's own unique code to invite others
 struct AddFriendListScreen: View {
     @Environment(\.dismiss) var dismiss
-    @State private var inputCode = "" //User input for friend's invite code
+    @State private var inputCode = ""
     @State private var errorMessage: String?
     var userId: String?
-    @State private var currentCode: String? //User's current generated invite code
-
+    @State private var currentCode: String?
     private let db = Firestore.firestore()
 
     var body: some View {
         NavigationStack {
             ZStack {
-                //Background gradient UI
                 LinearGradient(
                     gradient: Gradient(colors: [
-                        Color(red: 1.0, green: 0.85, blue: 0.95), // blush pink
-                        Color(red: 1.0, green: 0.7, blue: 0.85)   // soft rose
+                        Color(red: 1.0, green: 0.85, blue: 0.95),
+                        Color(red: 1.0, green: 0.7, blue: 0.85)
                     ]),
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
 
-                //Main Content Shown on Screen
                 Form {
                     Section(header: Text("Enter Friend Code")) {
                         TextField("6-character code", text: $inputCode)
@@ -52,7 +48,6 @@ struct AddFriendListScreen: View {
                         if let code = currentCode {
                             Text("Code: \(code)")
                             .font(.headline)
-                            //Lets a user copy the generated code 
                             .contextMenu {
                                 Button(action: {
                                     UIPasteboard.general.string = code
@@ -63,13 +58,13 @@ struct AddFriendListScreen: View {
                                 }
                             }
                         }
-                    //Error message
+                    
                     if let errorMessage {
                         Text(errorMessage)
                             .foregroundColor(.red)
                     }
                 }
-                .scrollContentBackground(.hidden) // Hide default white background
+                .scrollContentBackground(.hidden)
                 .background(Color.clear)
             }
             .navigationTitle("Add Friend")
@@ -94,8 +89,7 @@ struct AddFriendListScreen: View {
         }
     }
 
-    //Generate's a new 6 character friend code and saves it in FireStore
-    //Takes in the ID of the current user
+/// Generate's a new 6 character friend code to save it in FireStore and takes in the ID of the current user
     func generateFriendCode(for userId: String) {
         let code = randomCode(length: 6)
         let expiration = Timestamp(date: Date().addingTimeInterval(300)) // 5 minutes
@@ -114,7 +108,7 @@ struct AddFriendListScreen: View {
         }
     }
 
-    //Attempts to add a friend based on the entered invite code
+/// Adds a friend based on the entered invite code
     func addFriendByCode() {
         guard let userId = userId else {
             errorMessage = "Missing user ID"
@@ -131,7 +125,6 @@ struct AddFriendListScreen: View {
                 errorMessage = "Error checking code: \(error.localizedDescription)"
                 return
             }
-            //Catching errors for invalid, expired, or own-code
             guard let data = snapshot?.data(),
                   let creatorId = data["creatorId"] as? String,
                   let expiresAt = data["expiresAt"] as? Timestamp else {
@@ -149,7 +142,6 @@ struct AddFriendListScreen: View {
                 errorMessage = "You can't add yourself"
                 return
             }
-            //Adds friend to current user's friend list
             db.collection("users").document(userId)
                 .collection("friends").document(creatorId)
                 .setData(["addedAt": Timestamp()]) { err in
@@ -162,7 +154,8 @@ struct AddFriendListScreen: View {
                 }
         }
     }
-    //Generates random alphabatized code of the indicated length
+    
+/// Generates random alphabatized code of the indicated length
     func randomCode(length: Int) -> String {
         let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         return String((0..<length).map { _ in characters.randomElement()! })

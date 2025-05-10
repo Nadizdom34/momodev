@@ -2,14 +2,13 @@ import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 
-//Represents friend, sets up variables that will be shown on friends list UI.
+/// Represents friends, sets up variables that will be shown on friends list UI.
 struct Friend: Identifiable, Hashable {
     let id: String
     let name: String
     let status: GymStatus
     let message: String?
 }
-//Handles adding a friend on screen and stores to Firebase
 struct AddFriendScreen: View {
     @Environment(\.dismiss) var dismiss
     @Binding var friends: [Friend]
@@ -29,7 +28,6 @@ struct AddFriendScreen: View {
             .navigationTitle("Add Friend")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    //                    Button("Cancel") { dismiss() }
                     Button(action:{
                         dismiss()
                     }){
@@ -47,7 +45,8 @@ struct AddFriendScreen: View {
             }
         }
     }
-    //Searches for a friend by phone number in Firestore and adds them to the current user's friends' list
+    
+/// Searches Firestore for a user with the given phone number and adds them to the current user's friends list if they are found.
     func searchFriendByPhone() {
         guard let userID = Auth.auth().currentUser?.uid else {
             print(" User is not authenticated")

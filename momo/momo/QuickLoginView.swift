@@ -2,16 +2,14 @@ import SwiftUI
 import FirebaseFirestore
 import FirebaseAuth
 
+/// A SwiftUI view for the first-time or quick login which allows users to enter their name.The view updates Firestore with the user's name and initializes the default profile fields.
 struct QuickLoginView: View {
     @State private var userName = ""
     @State private var error: String?
-    
     @Binding var userData: [String: Any]
-
     
     var body: some View {
         ZStack {
-            // Purple Gradient Background
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 0.85, green: 0.80, blue: 0.95),
@@ -25,7 +23,6 @@ struct QuickLoginView: View {
             VStack(spacing: 20) {
                 Spacer()
                 
-                // Welcome Icon
                 Image(systemName: "person.crop.circle.badge.plus")
                     .resizable()
                     .scaledToFit()
@@ -34,7 +31,6 @@ struct QuickLoginView: View {
                     .shadow(radius: 10)
                     .padding(.bottom, 10)
                 
-                // Welcome Texts
                 VStack(spacing: 8) {
                     Text("Welcome to")
                         .font(.title2)
@@ -53,7 +49,6 @@ struct QuickLoginView: View {
                 
                 Spacer()
                 
-                // Username Input
                 VStack(spacing: 16) {
                     TextField("Enter your name", text: $userName)
                         .padding()
@@ -87,6 +82,7 @@ struct QuickLoginView: View {
         }
     }
     
+/// Handles login by saving the user's name and initial profile data to Firestore. And iff successful it updates the shared `userData` state.
     private func handleLogin() {
         guard !userName.isEmpty else {
             error = "Please enter your name"
@@ -106,6 +102,7 @@ struct QuickLoginView: View {
             "gymStatus": GymStatus.notInGym.rawValue,
             "statusMessage": ""
         ]
+        
         db.collection("users").document(userId).setData(newData, merge: true) { error in
             if let error = error {
                 print("Error updating status: \(error)")

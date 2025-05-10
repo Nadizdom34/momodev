@@ -2,9 +2,7 @@ import SwiftUI
 import FirebaseFirestore
 import FirebaseFunctions
 
-// Displays the user's friends in a list view
-// Receives real-time updates from Firestore
-// Handles adding friends to the current user's friend list
+/// Displays the user's friends in a list view, receives real-time updates from Firestore, and handles adding friends to the current user's friend list
 struct FriendsListScreen: View {
     @State private var friendsDict: [String: Friend] = [:]
     @State private var showAddFriend = false
@@ -15,7 +13,6 @@ struct FriendsListScreen: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background UI
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color(red: 1.0, green: 0.85, blue: 0.95),
@@ -26,7 +23,6 @@ struct FriendsListScreen: View {
                 )
                 .ignoresSafeArea()
 
-                // Friend list and empty state message
                 ZStack {
                     if friendsDict.isEmpty {
                         VStack {
@@ -100,7 +96,7 @@ struct FriendsListScreen: View {
         }
     }
 
-    // Sets up Firestore listeners to keep track of updates to a user's friends list and friend's statuses
+/// Sets up Firestore listeners to keep track of updates to a user's friends list and friend's statuses
     func listenToFriends() {
         guard let userId = userId, !userId.isEmpty else { return }
         removeAllListeners()
@@ -151,7 +147,7 @@ struct FriendsListScreen: View {
             }
     }
 
-    // Removes all listeners to prevent memory leaks
+/// Removes all listeners to prevent memory leaks
     func removeAllListeners() {
         listeners.forEach { $0.remove() }
         listeners.removeAll()
